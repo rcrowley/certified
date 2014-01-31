@@ -1,0 +1,92 @@
+#!/bin/sh
+
+#/ Usage: certified-ca [--bits=<bits>] [--days=<days>] [--db=<db>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
+#/   --bits=<bits>    bits to use for the private key (defaults to 2048)
+#/   --days=<days>    days until the certificate expires (defaults to 3650)
+#/   --db=<db>        OpenSSL database directory (defaults to etc/ssl)
+#/   C=<country>      certificate country
+#/   ST=<state>       certificate state (optional)
+#/   L=<locality>     certificate locality (usually a city)
+#/   O=<organization> certificate organization (usually a company)
+#/   CN=<common-name> certificate common name (usually a domain name or Company CA)
+
+set -e
+
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
+
+BITS=2048
+DAYS=3650
+DB="$PWD/etc/ssl"
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        --bits) BITS="$2" shift 2;;
+        --bits=*) BITS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --days) DAYS="$2" shift 2;;
+        --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --db) DB="$2" shift 2;;
+        --db=*) DB="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+		-h|--help) usage 0;;
+		-*) usage 1;;
+        C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+		*) usage 1;;
+    esac
+done
+[ "$C" -a "$L" -a "$CN" ] || usage 1
+
+mkdir -p "$DB"
+cd "$DB"
+
+if [ -f "certs/ca.crt" ]
+then die "CA already exists in $DB"
+fi
+if [ -f "ca.db.serial" -o -f "private/ca.key" ]
+then die "CA already partially exists in $DB"
+fi
+
+mkdir -p "certs" "private"
+touch "ca.db" "ca.db.attr"
+echo "01" >"ca.db.serial"
+git init
+
+{
+    cat <<EOF
+[req]
+default_bits = $BITS
+default_md = sha1
+distinguished_name = dn
+prompt = no
+[dn]
+EOF
+    if_echo "$C" "C = $C"
+    if_echo "$ST" "ST = $ST"
+    if_echo "$L" "L = $L"
+    if_echo "$O" "O = $O"
+    echo "CN = $CN"
+} >"ca.cnf"
+
+log "generating RSA private key; please choose and confirm a passphrase"
+openssl genrsa -des3 -out "private/ca.key" "$BITS"
+log "signing the CA certificate; please enter the passphrase"
+openssl req -config "ca.cnf" -days "$DAYS" -key "private/ca.key" -new -out "certs/ca.crt" -x509
+
+{
+    cat <<EOF
+: \${BITS:="$BITS"}
+: \${DAYS:="$DAYS"}
+
+EOF
+    if_echo "$C" ": \${C:=\"$C\"}"
+    if_echo "$ST" ": \${ST:=\"$ST\"}"
+    if_echo "$L" ": \${L:=\"$L\"}"
+    if_echo "$O" ": \${O:=\"$O\"}"
+} >"defaults.sh"
+
+git add "."
+git commit -m"$MESSAGE" -q
+
+cat "certs/ca.crt"

@@ -1,16 +1,45 @@
-# certified(1) -- TODO
+# certified(1) -- generate and sign a certificate
 
 ## SYNOPSIS
 
-TODO
+`certified` [`--bits`=_bits_] [`--days`=_days_] [`--db`=_db_] [`--name`=_name_] [`--revoke`] [`--self-signed`] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
 
 ## DESCRIPTION
 
-TODO
+Generate and sign a certificate with the CA in _db_ unless `--revoke` is given, in which case the certificate is revoked instead.
+
+Additional DNS names, including wildcards, and IP addresses can be added to the certificate using the `+` option.
 
 ## OPTIONS
 
-TODO
+* `--bits`=_bits_:
+  Bits to use for the private key (defaults to _2048_).
+* `--days`=_days_:
+  Days until the certificate expires (defaults to _3650_).
+* `--db`=_db_:
+  OpenSSL database directory (defaults to _etc/ssl_).
+* `--name`=_name_:
+  Filename to use (default derived from the certificate common name).
+* `--revoke`:
+  Revoke an existing certificate.
+* `--self-signed`:
+  Generate a self-signed certificate instead of using the CA.
+* `C`=_country_:
+  Certificate country (defaults to the CA country).
+* `ST`=_state_:
+  Certificate state (defaults to the CA state).
+* `L`=_locality_:
+  Certificate Locality (usually a city; defaults to the CA locality).
+* `O`=_organization_:
+  Certificate organization (usually a company; defaults to the CA organization).
+* `CN`=_common-name_:
+  Certificate common name (usually a domain name).
+* `+`_dns_, `+`_ip_:
+  Add a DNS name or IP address to the certificate's subject alternative names.
+
+## THEME SONG
+
+Led Zeppelin - "Fool in the Rain"
 
 ## AUTHOR
 
@@ -18,4 +47,6 @@ Richard Crowley <r@rcrowley.org>
 
 ## SEE ALSO
 
-TODO
+`certified-ca`(1), `openssl`(1), `ca`(1), `genrsa`(1), `req`(1), `x509`(1)
+
+<https://github.com/rcrowley/certified/wiki>

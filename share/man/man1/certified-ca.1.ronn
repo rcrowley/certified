@@ -1,0 +1,46 @@
+# certified-ca(1) -- generate a CA
+
+## SYNOPSIS
+
+`certified-ca` [`--bits`=_bits_] [`--days`=_days_] [`--db`=_db_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
+
+## DESCRIPTION
+
+Generate a private key and sign a CA certificate.
+
+_db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certificates.
+
+## OPTIONS
+
+* `--bits`=_bits_:
+  Bits to use for the private key (defaults to _2048_).
+* `--days`=_days_:
+  Days until the certificate expires (defaults to _3650_).
+* `--db`=_db_:
+  OpenSSL database directory (defaults to _etc/ssl_).
+* `C`=_country_:
+  Certificate country.
+* `ST`=_state_:
+  Certificate state.
+* `L`=_locality_:
+  Certificate Locality (usually a city).
+* `O`=_organization_:
+  Certificate organization (usually a company).
+* `CN`=_common-name_:
+  Certificate common name (usually a domain name or _Company CA_).
+* `+`_dns_, `+`_ip_:
+  Add a DNS name or IP address to the certificate's subject alternative names.
+
+## THEME SONG
+
+Led Zeppelin - "Fool in the Rain"
+
+## AUTHOR
+
+Richard Crowley <r@rcrowley.org>
+
+## SEE ALSO
+
+`certified`(1), `openssl`(1), `ca`(1), `genrsa`(1), `req`(1), `x509`(1)
+
+<https://github.com/rcrowley/certified/wiki>
