@@ -5,6 +5,7 @@
 #/   --days=<days>    days until the certificate expires (defaults to 3650)
 #/   --db=<db>        OpenSSL database directory
 #/   --name=<name>    filename to use (default derived from the certificate common name)
+#/   --no-sign        do not sign the certificate; stop with a certificate signing request
 #/   --revoke         revoke an existing certificate
 #/   --self-signed    generate a self-signed certificate instead of using the CA
 #/   C=<country>      certificate country (defaults to the CA country)
@@ -33,6 +34,7 @@ do
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --no-sign) NO_SIGN="yes" shift;;
         --revoke) REVOKE="yes" shift;;
         --self|--self-signed) SELF_SIGNED="yes" shift;;
 		-h|--help) usage 0;;
@@ -176,12 +178,26 @@ then
     log "self-signing the certificate"
     openssl req -config "$NAME.cnf" -days "$DAYS" -key "private/$NAME.key" -new -out "certs/$NAME.crt" -x509
 else
-    log "signing the certificate with the CA; please enter the passphrase"
     openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -nodes -out "$NAME.csr"
-    openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
+    if [ -z "$NO_SIGN" ]
+    then
+        log "signing the certificate with the CA; please enter the passphrase"
+        openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
+    fi
 fi
 
 git add "."
 git commit -m"$MESSAGE" -q
 
-cat "certs/$NAME.crt"
+echo >&2
+log "install this private key on your server"
+cat "private/$NAME.key"
+echo >&2
+if [ "$NO_SIGN" ]
+then
+    log "relay this certificate signing request to your certificate vendor"
+    cat "$NAME.csr"
+else
+    log "install this certificate on your server"
+    cat "certs/$NAME.crt"
+fi
