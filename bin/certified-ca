@@ -89,4 +89,6 @@ EOF
 git add "."
 git commit -m"$MESSAGE" -q
 
+echo >&2
+log "install this certificate on your laptops and servers"
 cat "certs/ca.crt"
