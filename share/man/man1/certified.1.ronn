@@ -1,0 +1,21 @@
+# certified(1) -- TODO
+
+## SYNOPSIS
+
+TODO
+
+## DESCRIPTION
+
+TODO
+
+## OPTIONS
+
+TODO
+
+## AUTHOR
+
+Richard Crowley <r@rcrowley.org>
+
+## SEE ALSO
+
+TODO
