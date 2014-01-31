@@ -48,6 +48,7 @@ TODO
 * Help users with PFS.
 * Help users with session resumption.
 * YAML generator for use with Hiera/Puppet.
+* OSCP responder support.
 
 TODONE
 ------
