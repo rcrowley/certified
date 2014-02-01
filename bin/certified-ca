@@ -14,9 +14,6 @@ set -e
 
 . "$(dirname "$(dirname "$0")")/lib/certified.sh"
 
-BITS=2048
-DAYS=3650
-DB="$PWD/etc/ssl"
 while [ "$#" -gt 0 ]
 do
     case "$1" in
@@ -38,20 +35,21 @@ do
 done
 [ "$C" -a "$L" -a "$CN" ] || usage 1
 
-mkdir -p "$DB"
+mkdir -p "$DB/certs" "$DB/private"
 cd "$DB"
 
 if [ -f "certs/ca.crt" ]
 then die "CA already exists in $DB"
 fi
-if [ -f "ca.db.serial" -o -f "private/ca.key" ]
+#if [ -f "ca.db.serial" -o -f "private/ca.key" ]
+if [ -f "private/ca.key" ]
 then die "CA already partially exists in $DB"
 fi
 
-mkdir -p "certs" "private"
 touch "ca.db" "ca.db.attr"
-echo "01" >"ca.db.serial"
-git init
+if [ ! -f "ca.db.serial" ]
+then echo "01" >"ca.db.serial"
+fi
 
 {
     cat <<EOF
@@ -86,6 +84,7 @@ EOF
     if_echo "$O" ": \${O:=\"$O\"}"
 } >"defaults.sh"
 
+git init -q
 git add "."
 git commit -m"$MESSAGE" -q
 

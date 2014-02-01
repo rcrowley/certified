@@ -40,8 +40,8 @@ The [wiki](https://github.com/rcrowley/certified/wiki) documents common usage pa
 TODO
 ----
 
+* `man` pages for `certified-csr` and `certified-crt`.
 * Streamline GPG-encrypted backups of your CA.
-* Decouple private keys and certificate signing requests from the signing itself.
 * Document how to run an autosigning sub-CA.
 * Example TLS clients that verify certificates with the CA (in various languages).
 * Example TLS servers that use one of these certificates (in various languages).
@@ -67,3 +67,4 @@ TODONE
 * Document how to install the CA on Linux.
 * Document how to install the CA so browsers can use it.
 * Document how to run a CA like Betable's.
+* Decouple private keys and certificate signing requests from the signing itself.

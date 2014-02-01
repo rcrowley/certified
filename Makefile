@@ -19,6 +19,9 @@ install: bin/* lib/* share/man/man*/*.[12345678]
 	install -d $(DESTDIR)$(mandir)/man1
 	install -m644 share/man/man1/*.1 $(DESTDIR)$(mandir)/man1
 
+test:
+	sh test.sh
+
 uninstall:
 	make install DESTDIR=uninstall
 	-find uninstall -depth -type f -printf $(DESTDIR)/%P\n | xargs rm -f
@@ -38,4 +41,4 @@ share/html/%.1.html: share/man/man1/%.1.ronn
 	ronn --html --manual=Certified --style=toc $<
 	mv $(<:.ronn=.html) $@
 
-.PHONY: all clean install uninstall
+.PHONY: all clean install test uninstall

@@ -1,6 +1,14 @@
 set -e
 
-# Take note of the entire command line to use as a Git commit message.
+BITS=2048
+DAYS=3650
+DB="$PWD/etc/ssl"
+
+# Prefer to find other certified-* tools in the same directory as this one.
+export PATH="$(cd "$(dirname "$0")" && pwd):$PATH"
+
+# Take note of the entire command line to use as a Git commit message.  This
+# must be done before any (destructive) option parsing takes place.
 MESSAGE="$0 $*"
 
 # Log a message and exit non-zero.
@@ -19,7 +27,7 @@ if_echo() {
 }
 
 # Return zero if the first argument looks like a DNS name, including wildcards
-# and single labels.  Exit non-zero otherwise.
+# and single labels.  Return non-zero otherwise.
 is_dns() {
     case "$1" in
         " ") false;;

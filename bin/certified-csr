@@ -1,0 +1,157 @@
+#!/bin/sh
+
+#/ Usage: certified-csr [--bits=<bits>] [--days=<days>] [--db=<db>] [--name=<name>] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
+#/   --bits=<bits>    bits to use for the private key (defaults to 2048)
+#/   --days=<days>    days until the certificate expires (defaults to 3650)
+#/   --db=<db>        OpenSSL database directory
+#/   --name=<name>    filename to use (default derived from the certificate common name)
+#/   C=<country>      certificate country (defaults to the CA country)
+#/   ST=<state>       certificate state (defaults to the CA state)
+#/   L=<locality>     certificate locality (usually a city; defaults to the CA locality)
+#/   O=<organization> certificate organization (usually a company; defaults to the CA organization)
+#/   CN=<common-name> certificate common name (usually a domain name)
+#/   +<dns>           add a DNS name to the certificate's subject alternative names
+#/   +<ip>            add an IP address to the certificate's subject alternative names
+
+set -e
+
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
+
+SAN_DNS=""
+SAN_IP=""
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        --bits) BITS="$2" shift 2;;
+        --bits=*) BITS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --days) DAYS="$2" shift 2;;
+        --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --db) DB="$2" shift 2;;
+        --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+        --name) NAME="$2" shift 2;;
+        --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+		-h|--help) usage 0;;
+		-*) usage 1;;
+        C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        +*)
+            _="$(echo "$1" | cut -c"2-")" shift
+            if is_ip "$_"
+            then SAN_IP="$SAN_IP $_"
+            elif is_dns "$_"
+            then SAN_DNS="$SAN_DNS $_"
+            else die "subject alternative name $_ is invalid"
+            fi;;
+		*) break;;
+    esac
+done
+[ "$CN" ] || usage 1
+if [ -z "$NAME" ]
+then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+fi
+
+mkdir -p "$DB/private"
+cd "$DB"
+
+if [ -f "defaults.sh" ]
+then . "$PWD/defaults.sh"
+fi
+
+if [ -f "certs/$NAME.crt" ]
+then die "certificate $NAME.crt already exists; use --revoke and try again"
+fi
+if [ -f "$NAME.csr" ]
+then die "certificate signing request $NAME.csr already exists"
+fi
+if [ -f "private/$NAME.key" ]
+then die "private key $NAME.key already exists"
+fi
+
+log "configuring OpenSSL"
+{
+    cat <<EOF
+[ca]
+default_ca = certified
+
+[certified]
+certificate = certs/ca.crt
+copy_extensions = copy
+database = ca.db
+default_days = $DAYS
+default_md = sha1
+dir = .
+new_certs_dir = certs
+policy = policy_match
+private_key = private/ca.key
+serial = ca.db.serial
+unique_subject = yes
+
+[dn]
+EOF
+    if_echo "$C" "C = $C"
+    if_echo "$ST" "ST = $ST"
+    if_echo "$L" "L = $L"
+    if_echo "$O" "O = $O"
+    echo "CN = $CN"
+    cat <<EOF
+[ext]
+extendedKeyUsage = serverAuth, clientAuth
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+EOF
+    if [ "$SAN_DNS" -o "$SAN_IP" ]
+    then echo "subjectAltName = @san"
+    fi
+    cat <<EOF
+
+[policy_match]
+commonName = supplied
+countryName = match
+emailAddress = optional
+localityName = match
+organizationalUnitName = optional
+organizationName = match
+stateOrProvinceName = match
+
+[req]
+default_bits = $BITS
+default_md = sha1
+distinguished_name = dn
+prompt = no
+req_extensions = ext
+EOF
+    if [ "$SAN_DNS" -o "$SAN_IP" ]
+    then cat <<EOF
+
+[san]
+EOF
+    fi
+    I=1
+    if is_dns "$CN"
+    then
+        echo "DNS.$I = $CN"
+        I=$(($I + 1))
+    fi
+    for DNS in $SAN_DNS
+    do
+        echo "DNS.$I = $DNS"
+        I=$(($I + 1))
+    done
+    I=1
+    for IP in $SAN_IP
+    do
+        echo "IP.$I = $IP"
+        I=$(($I + 1))
+    done
+    cat <<EOF
+
+[v3_ca]
+EOF
+} >"$NAME.cnf"
+
+log "generating RSA private key"
+openssl genrsa -out "private/$NAME.key" "$BITS"
+log "generating certificate signing request"
+openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -nodes -out "$NAME.csr"

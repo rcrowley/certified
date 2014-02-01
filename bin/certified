@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#/ Usage: certified [--bits=<bits>] [--days=<days>] [--db=<db>] [--name=<name>] [--revoke] [--self-signed] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
+#/ Usage: certified [--bits=<bits>] [--days=<days>] [--db=<db>] [--name=<name>] [--no-sign] [--revoke] [--self-signed] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
 #/   --bits=<bits>    bits to use for the private key (defaults to 2048)
 #/   --days=<days>    days until the certificate expires (defaults to 3650)
 #/   --db=<db>        OpenSSL database directory
@@ -20,9 +20,7 @@ set -e
 
 . "$(dirname "$(dirname "$0")")/lib/certified.sh"
 
-DB="$PWD/etc/ssl"
-SAN_DNS=""
-SAN_IP=""
+SAN=""
 while [ "$#" -gt 0 ]
 do
     case "$1" in
@@ -34,9 +32,9 @@ do
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        --no-sign) NO_SIGN="yes" shift;;
-        --revoke) REVOKE="yes" shift;;
-        --self|--self-signed) SELF_SIGNED="yes" shift;;
+        --no-sign) NO_SIGN="--no-sign" shift;;
+        --revoke) REVOKE="--revoke" shift;;
+        --self|--self-sign|--self-signed) SELF_SIGNED="--self-signed" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
         C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
@@ -44,20 +42,16 @@ do
         L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        +*)
-            _="$(echo "$1" | cut -c"2-")" shift
-            if is_ip "$_"
-            then SAN_IP="$SAN_IP $_"
-            elif is_dns "$_"
-            then SAN_DNS="$SAN_DNS $_"
-            else usage 1
-            fi;;
+        +*) SAN="$SAN $1" shift;;
 		*) break;;
     esac
 done
 [ "$CN" ] || usage 1
-NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+if [ -z "$NAME" ]
+then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+fi
 
+mkdir -p "$DB"
 cd "$DB"
 
 if [ -f "defaults.sh" ]
@@ -74,118 +68,21 @@ then
     fi
     mkdir -p "crl"
     log "revoking $NAME.crt and generating ca.crl"
-    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl" -revoke "certs/$NAME.crt"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -revoke "certs/$NAME.crt"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl"
     git rm -q "certs/$NAME.crt" "$NAME.cnf" "$NAME.csr" "private/$NAME.key"
     git add "."
     git commit -m"$MESSAGE" -q
     exit
 fi
 
-if [ -f "certs/$NAME.crt" ]
-then die "certificate $NAME.crt already exists; use --revoke and try again"
-fi
-if [ -f "$NAME.csr" ]
-then die "certificate signing request $NAME.csr already exists"
-fi
-if [ -f "private/$NAME.key" ]
-then die "private key $NAME.key already exists"
+certified-csr --bits="$BITS" --days="$DAYS" --db="$DB" --name="$NAME" C="$C" CN="$CN" L="$L" O="$O" ST="$ST" $SAN
+
+if [ -z "$NO_SIGN" ]
+then certified-crt --days="$DAYS" --db="$DB" --name="$NAME" $SELF_SIGNED CN="$CN"
 fi
 
-{
-    cat <<EOF
-[ca]
-default_ca = certified
-
-[certified]
-certificate = certs/ca.crt
-copy_extensions = copy
-database = ca.db
-default_days = $DAYS
-default_md = sha1
-dir = .
-new_certs_dir = certs
-policy = policy_match
-private_key = private/ca.key
-serial = ca.db.serial
-unique_subject = yes
-
-[dn]
-EOF
-    if_echo "$C" "C = $C"
-    if_echo "$ST" "ST = $ST"
-    if_echo "$L" "L = $L"
-    if_echo "$O" "O = $O"
-    echo "CN = $CN"
-    cat <<EOF
-[ext]
-extendedKeyUsage = serverAuth, clientAuth
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-EOF
-    if [ "$SAN_DNS" -o "$SAN_IP" ]
-    then echo "subjectAltName = @san"
-    fi
-    cat <<EOF
-
-[policy_match]
-commonName = supplied
-countryName = match
-emailAddress = optional
-localityName = match
-organizationalUnitName = optional
-organizationName = match
-stateOrProvinceName = match
-
-[req]
-default_bits = $BITS
-default_md = sha1
-distinguished_name = dn
-prompt = no
-req_extensions = ext
-EOF
-    if [ "$SAN_DNS" -o "$SAN_IP" ]
-    then cat <<EOF
-
-[san]
-EOF
-    fi
-    I=1
-    if is_dns "$CN"
-    then
-        echo "DNS.$I = $CN"
-        I=$(($I + 1))
-    fi
-    for DNS in $SAN_DNS
-    do
-        echo "DNS.$I = $DNS"
-        I=$(($I + 1))
-    done
-    I=1
-    for IP in $SAN_IP
-    do
-        echo "IP.$I = $IP"
-        I=$(($I + 1))
-    done
-    cat <<EOF
-
-[v3_ca]
-EOF
-} >"$NAME.cnf"
-
-log "generating RSA private key"
-openssl genrsa -out "private/$NAME.key" "$BITS"
-if [ "$SELF_SIGNED" ]
-then
-    log "self-signing the certificate"
-    openssl req -config "$NAME.cnf" -days "$DAYS" -key "private/$NAME.key" -new -out "certs/$NAME.crt" -x509
-else
-    openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -nodes -out "$NAME.csr"
-    if [ -z "$NO_SIGN" ]
-    then
-        log "signing the certificate with the CA; please enter the passphrase"
-        openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
-    fi
-fi
-
+git init -q
 git add "."
 git commit -m"$MESSAGE" -q
 
