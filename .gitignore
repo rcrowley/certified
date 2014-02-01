@@ -1,3 +1,5 @@
 *.deb
+*.gpg
 *.swp
+*.tar.gz
 etc
