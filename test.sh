@@ -69,6 +69,11 @@ grep -q "DNS:example.com"
 openssl x509 -in "etc/ssl/certs/san.crt" -noout -text |
 grep -q "IP Address:127.0.0.1"
 
+# Test that a valid DNS name as CN is added as a subject alternative name.
+certified CN="example.com"
+openssl x509 -in "etc/ssl/certs/san.crt" -noout -text |
+grep -q "DNS:example.com"
+
 # Test that we can add DNS wildcards to a certificate.
 certified CN="Wildcard" +"*.example.com"
 openssl x509 -in "etc/ssl/certs/wildcard.crt" -noout -text |
