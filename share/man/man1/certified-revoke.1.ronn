@@ -1,0 +1,36 @@
+# certified-revoke(1) -- revoke certificates
+
+## SYNOPSIS
+
+`certified-revoke` [`--db`=_db_] [`--password`=_password_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
+
+## DESCRIPTION
+
+Revoke a certificate and generate a certificate revocation list.
+
+## OPTIONS
+
+* `--db`=_db_:
+  OpenSSL database directory (defaults to _etc/ssl_).
+* `--password`=_password_:
+  Password for the CA private key.
+* `CN`=_common-name_:
+  Certificate common name (usually a domain name).
+
+## THEME SONG
+
+Led Zeppelin - "Fool in the Rain"
+
+## AUTHOR
+
+Richard Crowley <r@rcrowley.org>
+
+## SEE ALSO
+
+`certified`(1), `certified-ca`(1)
+
+`certified-csr`(1), `certified-crt`(1)
+
+`openssl`(1), `ca`(1), `x509`(1)
+
+<https://github.com/rcrowley/certified/wiki>

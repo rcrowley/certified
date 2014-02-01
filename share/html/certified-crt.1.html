@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv='content-type' value='text/html;charset=utf8'>
   <meta name='generator' value='Ronn/v0.7.3 (http://github.com/rtomayko/ronn/tree/0.7.3)'>
-  <title>certified(1) - generate and sign certificates</title>
+  <title>certified-crt(1) - sign certificates</title>
   <style type='text/css' media='all'>
   /* style: man */
   body#manpage {margin:0}
@@ -69,43 +69,33 @@
   </div>
 
   <ol class='man-decor man-head man head'>
-    <li class='tl'>certified(1)</li>
+    <li class='tl'>certified-crt(1)</li>
     <li class='tc'>Certified</li>
-    <li class='tr'>certified(1)</li>
+    <li class='tr'>certified-crt(1)</li>
   </ol>
 
   <h2 id="NAME">NAME</h2>
 <p class="man-name">
-  <code>certified</code> - <span class="man-whatis">generate and sign certificates</span>
+  <code>certified-crt</code> - <span class="man-whatis">sign certificates</span>
 </p>
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>certified</code> [<code>--bits</code>=<em>bits</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--name</code>=<em>name</em>] [<code>--no-sign</code>] [<code>--password</code>=<em>password</em>] [<code>--revoke</code>] [<code>--self-signed</code>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
+<p><code>certified-crt</code> [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--name</code>=<em>name</em>] [<code>--password</code>=<em>password</em>] [<code>--self-signed</code>] <code>CN</code>=<em>common-name</em></p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
-<p>Generate and sign a certificate with the CA in <em>db</em> unless <code>--revoke</code> is given, in which case the certificate is revoked instead.</p>
-
-<p>Additional DNS names, including wildcards, and IP addresses can be added to the certificate using the <code>+</code> option.</p>
+<p>Sign a certificate with the CA in <em>db</em> unless <code>--self-signed</code> is given, in which case the certificate is signed with itself.</p>
 
 <h2 id="OPTIONS">OPTIONS</h2>
 
 <dl>
-<dt><code>--bits</code>=<em>bits</em></dt><dd>Bits to use for the private key (defaults to <em>2048</em>).</dd>
 <dt><code>--days</code>=<em>days</em></dt><dd>Days until the certificate expires (defaults to <em>3650</em>).</dd>
 <dt class="flush"><code>--db</code>=<em>db</em></dt><dd>OpenSSL database directory (defaults to <em>etc/ssl</em>).</dd>
 <dt><code>--name</code>=<em>name</em></dt><dd>Filename to use (default derived from the certificate common name).</dd>
-<dt><code>--no-sign</code></dt><dd>Do not sign the certificate; stop with a certificate signing request.  Relay this certificate signing request to your certificate vendor.</dd>
 <dt><code>--password</code>=<em>password</em></dt><dd>Password for the CA private key.</dd>
-<dt><code>--revoke</code></dt><dd>Revoke an existing certificate.</dd>
 <dt><code>--self-signed</code></dt><dd>Generate a self-signed certificate instead of using the CA.</dd>
-<dt><code>C</code>=<em>country</em></dt><dd>Certificate country (defaults to the CA country).</dd>
-<dt><code>ST</code>=<em>state</em></dt><dd>Certificate state (defaults to the CA state).</dd>
-<dt><code>L</code>=<em>locality</em></dt><dd>Certificate Locality (usually a city; defaults to the CA locality).</dd>
-<dt><code>O</code>=<em>organization</em></dt><dd>Certificate organization (usually a company; defaults to the CA organization).</dd>
 <dt><code>CN</code>=<em>common-name</em></dt><dd>Certificate common name (usually a domain name).</dd>
-<dt><code>+</code><em>dns</em>, <code>+</code><em>ip</em></dt><dd>Add a DNS name or IP address to the certificate's subject alternative names.</dd>
 </dl>
 
 
@@ -119,11 +109,11 @@
 
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
-<p><code>certified-ca</code>(1)</p>
+<p><code>certified</code>(1), <code>certified-ca</code>(1)</p>
 
-<p><code>certified-csr</code>(1), <code>certified-crt</code>(1), <code>certified-revoke</code>(1)</p>
+<p><code>certified-csr</code>(1), <code>certified-revoke</code>(1)</p>
 
-<p><code>openssl</code>(1), <code>ca</code>(1), <code>genrsa</code>(1), <code>req</code>(1), <code>x509</code>(1)</p>
+<p><code>openssl</code>(1), <code>ca</code>(1), <code>req</code>(1), <code>x509</code>(1)</p>
 
 <p><a data-bare-link="true" href="https://github.com/rcrowley/certified/wiki">https://github.com/rcrowley/certified/wiki</a></p>
 
@@ -131,7 +121,7 @@
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
     <li class='tc'>February 2014</li>
-    <li class='tr'>certified(1)</li>
+    <li class='tr'>certified-crt(1)</li>
   </ol>
 
   </div>

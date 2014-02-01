@@ -40,7 +40,6 @@ The [wiki](https://github.com/rcrowley/certified/wiki) documents common usage pa
 TODO
 ----
 
-* `man` pages for `certified-csr` and `certified-crt`.
 * Streamline GPG-encrypted backups of your CA.
 * Document how to run an autosigning sub-CA.
 * Example TLS clients that verify certificates with the CA (in various languages).

@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-ca` [`--bits`=_bits_] [`--days`=_days_] [`--db`=_db_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
+`certified-ca` [`--bits`=_bits_] [`--days`=_days_] [`--db`=_db_] [`--password`=_password_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -18,6 +18,8 @@ _db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certifi
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:
   OpenSSL database directory (defaults to _etc/ssl_).
+* `--password`=_password_:
+  Password for the CA private key.
 * `C`=_country_:
   Certificate country.
 * `ST`=_state_:
@@ -41,6 +43,10 @@ Richard Crowley <r@rcrowley.org>
 
 ## SEE ALSO
 
-`certified`(1), `openssl`(1), `ca`(1), `genrsa`(1), `req`(1), `x509`(1)
+`certified`(1)
+
+`certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
+
+`openssl`(1), `ca`(1), `genrsa`(1), `req`(1), `x509`(1)
 
 <https://github.com/rcrowley/certified/wiki>
