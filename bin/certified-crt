@@ -12,7 +12,6 @@ set -e
 
 . "$(dirname "$(dirname "$0")")/lib/certified.sh"
 
-SAN=""
 while [ "$#" -gt 0 ]
 do
     case "$1" in

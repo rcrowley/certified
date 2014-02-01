@@ -9,7 +9,6 @@ set -e
 
 . "$(dirname "$(dirname "$0")")/lib/certified.sh"
 
-SAN=""
 while [ "$#" -gt 0 ]
 do
     case "$1" in
@@ -19,12 +18,7 @@ do
         --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
-        C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        +*) SAN="$SAN $1" shift;;
 		*) break;;
     esac
 done
