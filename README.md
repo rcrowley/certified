@@ -45,7 +45,6 @@ TODO
 * Example TLS servers that use one of these certificates (in various languages).
 * Help users with PFS.
 * Help users with session resumption.
-* YAML generator for use with Hiera/Puppet.
 * OSCP responder support.
 
 TODONE
@@ -67,3 +66,4 @@ TODONE
 * Document how to run a CA like Betable's.
 * Decouple private keys and certificate signing requests from the signing itself.
 * Document GPG-encrypted backups of your CA.
+* YAML generator for use with Hiera/Puppet.

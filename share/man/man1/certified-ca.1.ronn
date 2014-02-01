@@ -43,7 +43,7 @@ Richard Crowley <r@rcrowley.org>
 
 ## SEE ALSO
 
-`certified`(1)
+`certified`(1), `certified-yaml`(1)
 
 `certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
 

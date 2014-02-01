@@ -1,0 +1,30 @@
+# certified-yaml(1) -- generate Hiera-compatible YAML
+
+## SYNOPSIS
+
+`certified-yaml` [`--db`=_db_]
+
+## DESCRIPTION
+
+Generate Hiera-compatible YAML containing all certificates and all private keys except the CA private key.  The YAML is written to standard output.
+
+## OPTIONS
+
+* `--db`=_db_:
+  OpenSSL database directory (defaults to _etc/ssl_).
+
+## THEME SONG
+
+Led Zeppelin - "Fool in the Rain"
+
+## AUTHOR
+
+Richard Crowley <r@rcrowley.org>
+
+## SEE ALSO
+
+`certified`(1), `certified-ca`(1)
+
+`certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
+
+<https://github.com/rcrowley/certified/wiki>

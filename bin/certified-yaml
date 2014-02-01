@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#/ Usage: certified-yaml [--db=<db>]
+#/   --db=<db>             OpenSSL database directory
+
+set -e
+
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
+
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        --db) DB="$2" shift 2;;
+        --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+		-h|--help) usage 0;;
+		-*) usage 1;;
+		*) break;;
+    esac
+done
+
+echo "---"
+find "$DB" -name "*.crt" |
+while read PATHNAME
+do
+    NAME="$(basename "$PATHNAME" ".crt")"
+    echo "$NAME.crt: |"
+    cat "$PATHNAME" | sed "s/^/  /"
+    if [ "$NAME" != "ca" ]
+    then
+        echo "$NAME.key: |"
+        cat "$DB/private/$NAME.key" | sed "s/^/  /"
+    fi
+done
