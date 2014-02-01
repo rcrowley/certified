@@ -1,8 +1,9 @@
 all:
-	git checkout -q master
-	-cp share/html/* .
-	git checkout -q gh-pages
-	-git add .
-	-git commit -mgh-pages
+	git checkout master share/html
+	git rm --cached -r share/html
+	cp share/html/* .
+	rm -rf share/html
+	git add .
+	git commit -mgh-pages
 
 .PHONY: all
