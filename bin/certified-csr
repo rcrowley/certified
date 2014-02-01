@@ -52,6 +52,9 @@ done
 if [ -z "$NAME" ]
 then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
 fi
+if is_dns "$CN"
+then SAN_DNS="$CN $SAN_DNS"
+fi
 
 mkdir -p "$DB/private"
 cd "$DB"
@@ -129,11 +132,6 @@ EOF
 EOF
     fi
     I=1
-    if is_dns "$CN"
-    then
-        echo "DNS.$I = $CN"
-        I=$(($I + 1))
-    fi
     for DNS in $SAN_DNS
     do
         echo "DNS.$I = $DNS"

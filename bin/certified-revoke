@@ -1,0 +1,65 @@
+#!/bin/sh
+
+#/ Usage: certified-revoke [--db=<db>] [--password=<password>] CN=<common-name>
+#/   --db=<db>             OpenSSL database directory
+#/   --password=<password> password for the CA private key
+#/   CN=<common-name>      certificate common name (usually a domain name)
+
+set -e
+
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
+
+SAN=""
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        --db) DB="$2" shift 2;;
+        --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+        --password) PASSWORD="$2" shift 2;;
+        --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+		-h|--help) usage 0;;
+		-*) usage 1;;
+        C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        +*) SAN="$SAN $1" shift;;
+		*) break;;
+    esac
+done
+[ "$CN" ] || usage 1
+if [ -z "$NAME" ]
+then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+fi
+
+mkdir -p "$DB/crl"
+cd "$DB"
+
+if [ -f "defaults.sh" ]
+then . "$PWD/defaults.sh"
+fi
+
+if [ ! -f "certs/$NAME.crt" ]
+then die "certificate $NAME.crt does not exist"
+fi
+if [ ! -f "$NAME.cnf" ]
+then die "OpenSSL configuration $NAME.cnf does not exist"
+fi
+
+if [ "$PASSWORD" ]
+then
+    if [ "$PASSWORD" = "-" ]
+    then PASSIN="stdin"
+    else PASSIN="pass:$PASSWORD"
+    fi
+    log "revoking $NAME.crt"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -passin "$PASSIN" -revoke "certs/$NAME.crt"
+    log "generating ca.crl"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl" -passin "$PASSIN"
+else
+    log "revoking $NAME.crt; please enter the CA password"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -revoke "certs/$NAME.crt"
+    log "generating ca.crl; please enter the CA password"
+    openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl"
+fi
