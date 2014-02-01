@@ -2,8 +2,8 @@ set -e -x
 
 export PATH="$(cd "$(dirname "$0")" && pwd)/bin:$PATH"
 
-#cd "$(mktemp -d)"
-#trap "rm -rf \"$PWD\"" EXIT INT QUIT TERM
+cd "$(mktemp -d)"
+trap "rm -rf \"$PWD\"" EXIT INT QUIT TERM
 
 # Test that you don't need a CA to generate a CSR.
 certified-csr C="US" ST="CA" L="San Francisco" O="Certified" CN="No CA"
