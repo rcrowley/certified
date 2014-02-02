@@ -7,7 +7,7 @@
 \fBcertified\-revoke\fR \- revoke certificates
 .
 .SH "SYNOPSIS"
-\fBcertified\-revoke\fR [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-password\fR=\fIpassword\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\-revoke\fR [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-password\fR=\fIpassword\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Revoke a certificate and generate a certificate revocation list\.
@@ -17,6 +17,14 @@ Revoke a certificate and generate a certificate revocation list\.
 .TP
 \fB\-\-db\fR=\fIdb\fR
 OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
+.
+.TP
+\fB\-\-issuer\fR=\fIissuer\fR
+Common name of an alternative CA certificate\.
+.
+.TP
+\fB\-\-issuer\-name\fR=\fIissuer\-name\fR
+Filename of the alternative CA certificate (default derived from the alternative CA common name)\.
 .
 .TP
 \fB\-\-password\fR=\fIpassword\fR

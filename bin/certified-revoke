@@ -3,7 +3,7 @@
 #/ Usage: certified-revoke [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--password=<password>] CN=<common-name>
 #/   --db=<db>                   OpenSSL database directory
 #/   --issuer=<issuer>           common name of an alternative CA certificate
-#/   --issuer-name=<issuer-name> filename of the alternative CA certificate
+#/   --issuer-name=<issuer-name> filename of the alternative CA certificate (default derived fro mthe alternative CA common name)
 #/   --password=<password>       password for the CA private key
 #/   CN=<common-name>            certificate common name (usually a domain name)
 

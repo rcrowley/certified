@@ -81,7 +81,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>certified-csr</code> [<code>--bits</code>=<em>bits</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--name</code>=<em>name</em>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
+<p><code>certified-csr</code> [<code>--bits</code>=<em>bits</em>] [<code>--ca</code>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--issuer</code>=<em>issuer</em>] [<code>--issuer-name</code>=<em>issuer-name</em>] [<code>--name</code>=<em>name</em>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -93,8 +93,11 @@
 
 <dl>
 <dt><code>--bits</code>=<em>bits</em></dt><dd>Bits to use for the private key (defaults to <em>2048</em>).</dd>
+<dt class="flush"><code>--ca</code></dt><dd>Request that this certificate be a CA certificate.</dd>
 <dt><code>--days</code>=<em>days</em></dt><dd>Days until the certificate expires (defaults to <em>3650</em>).</dd>
 <dt class="flush"><code>--db</code>=<em>db</em></dt><dd>OpenSSL database directory (defaults to <em>etc/ssl</em>).</dd>
+<dt><code>--issuer</code>=<em>issuer</em></dt><dd>Common name of an alternative CA certificate.</dd>
+<dt><code>--issuer-name</code>=<em>issuer-name</em></dt><dd>Filename of the alternative CA certificate (default derived from the alternative CA common name).</dd>
 <dt><code>--name</code>=<em>name</em></dt><dd>Filename to use (default derived from the certificate common name).</dd>
 <dt><code>C</code>=<em>country</em></dt><dd>Certificate country (defaults to the CA country).</dd>
 <dt><code>ST</code>=<em>state</em></dt><dd>Certificate state (defaults to the CA state).</dd>
@@ -111,7 +114,7 @@
 
 <h2 id="AUTHOR">AUTHOR</h2>
 
-<p>Richard Crowley <a data-bare-link="true" href="&#x6d;&#97;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#114;&#64;&#114;&#x63;&#x72;&#111;&#x77;&#x6c;&#x65;&#x79;&#46;&#x6f;&#x72;&#103;">&#x72;&#x40;&#x72;&#99;&#x72;&#111;&#x77;&#x6c;&#x65;&#x79;&#46;&#x6f;&#x72;&#103;</a></p>
+<p>Richard Crowley <a href="&#109;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#x72;&#64;&#x72;&#x63;&#114;&#111;&#119;&#108;&#101;&#121;&#x2e;&#x6f;&#x72;&#x67;" data-bare-link="true">&#x72;&#64;&#x72;&#x63;&#x72;&#x6f;&#119;&#x6c;&#101;&#121;&#x2e;&#x6f;&#114;&#x67;</a></p>
 
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
@@ -121,7 +124,7 @@
 
 <p><code>openssl</code>(1), <code>genrsa</code>(1), <code>req</code>(1), <code>x509</code>(1)</p>
 
-<p><a data-bare-link="true" href="https://github.com/rcrowley/certified/wiki">https://github.com/rcrowley/certified/wiki</a></p>
+<p><a href="https://github.com/rcrowley/certified/wiki" data-bare-link="true">https://github.com/rcrowley/certified/wiki</a></p>
 
 
   <ol class='man-decor man-foot man foot'>

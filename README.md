@@ -40,7 +40,6 @@ The [wiki](https://github.com/rcrowley/certified/wiki) documents common usage pa
 TODO
 ----
 
-* Document how to run an autosigning sub-CA.
 * Example TLS clients that verify certificates with the CA (in various languages).
 * Example TLS servers that use one of these certificates (in various languages).
 * Help users with PFS.
@@ -67,3 +66,4 @@ TODONE
 * Decouple private keys and certificate signing requests from the signing itself.
 * Document GPG-encrypted backups of your CA.
 * YAML generator for use with Hiera/Puppet.
+* Document how to run an autosigning sub-CA.

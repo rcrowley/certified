@@ -7,7 +7,7 @@
 \fBcertified\-csr\fR \- generate certificate signing requests
 .
 .SH "SYNOPSIS"
-\fBcertified\-csr\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-name\fR=\fIname\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\-csr\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Generate a certificate signing request\.
@@ -22,12 +22,24 @@ Additional DNS names, including wildcards, and IP addresses can be added to the 
 Bits to use for the private key (defaults to \fI2048\fR)\.
 .
 .TP
+\fB\-\-ca\fR
+Request that this certificate be a CA certificate\.
+.
+.TP
 \fB\-\-days\fR=\fIdays\fR
 Days until the certificate expires (defaults to \fI3650\fR)\.
 .
 .TP
 \fB\-\-db\fR=\fIdb\fR
 OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
+.
+.TP
+\fB\-\-issuer\fR=\fIissuer\fR
+Common name of an alternative CA certificate\.
+.
+.TP
+\fB\-\-issuer\-name\fR=\fIissuer\-name\fR
+Filename of the alternative CA certificate (default derived from the alternative CA common name)\.
 .
 .TP
 \fB\-\-name\fR=\fIname\fR

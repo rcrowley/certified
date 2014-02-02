@@ -6,7 +6,7 @@
 #/   --days=<days>               days until the certificate expires (defaults to 3650)
 #/   --db=<db>                   OpenSSL database directory
 #/   --issuer=<issuer>           common name of an alternative CA certificate
-#/   --issuer-name=<issuer-name> filename of the alternative CA certificate
+#/   --issuer-name=<issuer-name> filename of the alternative CA certificate (default derived fro mthe alternative CA common name)
 #/   --name=<name>               filename to use (default derived from the certificate common name)
 #/   C=<country>                 certificate country (defaults to the CA country)
 #/   ST=<state>                  certificate state (defaults to the CA state)
