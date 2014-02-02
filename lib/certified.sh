@@ -30,7 +30,7 @@ if_echo() {
 # and single labels.  Return non-zero otherwise.
 is_dns() {
     case "$1" in
-        " ") false;;
+        *" "*) false;;
         \*.\*.*)
             log "double-wildcards are allowed by the RFC but not by Chrome"
             false;;
