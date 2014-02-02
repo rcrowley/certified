@@ -1,9 +1,11 @@
 #!/bin/sh
 
-#/ Usage: certified-revoke [--db=<db>] [--password=<password>] CN=<common-name>
-#/   --db=<db>             OpenSSL database directory
-#/   --password=<password> password for the CA private key
-#/   CN=<common-name>      certificate common name (usually a domain name)
+#/ Usage: certified-revoke [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--password=<password>] CN=<common-name>
+#/   --db=<db>                   OpenSSL database directory
+#/   --issuer=<issuer>           common name of an alternative CA certificate
+#/   --issuer-name=<issuer-name> filename of the alternative CA certificate
+#/   --password=<password>       password for the CA private key
+#/   CN=<common-name>            certificate common name (usually a domain name)
 
 set -e
 
@@ -14,6 +16,10 @@ do
     case "$1" in
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+        --issuer) ISSUER="$2" shift 2;;
+        --issuer=*) ISSUER="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --issuer-name) ISSUER_NAME="$2" shift 2;;
+        --issuer-name=*) ISSUER_NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --password) PASSWORD="$2" shift 2;;
         --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
@@ -25,6 +31,9 @@ done
 [ "$CN" ] || usage 1
 if [ -z "$NAME" ]
 then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+fi
+if [ -z "$ISSUER_NAME" ]
+then ISSUER_NAME="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
 fi
 
 mkdir -p "$DB/crl"
@@ -51,6 +60,12 @@ then
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -passin "$PASSIN" -revoke "certs/$NAME.crt"
     log "generating ca.crl"
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl" -passin "$PASSIN"
+elif [ "$ISSUER" ]
+then
+    log "revoking $NAME.crt"
+    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -keyfile "private/$ISSUER_NAME.key" -revoke "certs/$NAME.crt"
+    log "generating $ISSUER_NAME.crl"
+    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl"
 else
     log "revoking $NAME.crt; please enter the CA password"
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -revoke "certs/$NAME.crt"

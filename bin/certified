@@ -1,21 +1,24 @@
 #!/bin/sh
 
-#/ Usage: certified [--bits=<bits>] [--days=<days>] [--db=<db>] [--name=<name>] [--no-sign] [--password=<password>] [--revoke] [--self-signed] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
-#/   --bits=<bits>         bits to use for the private key (defaults to 2048)
-#/   --days=<days>         days until the certificate expires (defaults to 3650)
-#/   --db=<db>             OpenSSL database directory
-#/   --name=<name>         filename to use (default derived from the certificate common name)
-#/   --no-sign             do not sign the certificate; stop with a certificate signing request
-#/   --password=<password> password for the CA private key
-#/   --revoke              revoke an existing certificate
-#/   --self-signed         generate a self-signed certificate instead of using the CA
-#/   C=<country>           certificate country (defaults to the CA country)
-#/   ST=<state>            certificate state (defaults to the CA state)
-#/   L=<locality>          certificate locality (usually a city; defaults to the CA locality)
-#/   O=<organization>      certificate organization (usually a company; defaults to the CA organization)
-#/   CN=<common-name>      certificate common name (usually a domain name)
-#/   +<dns>                add a DNS name to the certificate's subject alternative names
-#/   +<ip>                 add an IP address to the certificate's subject alternative names
+#/ Usage: certified [--bits=<bits>] [--ca] [--days=<days>] [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--name=<name>] [--no-sign] [--password=<password>] [--revoke] [--self-signed] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
+#/   --bits=<bits>               bits to use for the private key (defaults to 2048)
+#/   --ca                        request that this certificate be a CA certificate
+#/   --days=<days>               days until the certificate expires (defaults to 3650)
+#/   --db=<db>                   OpenSSL database directory
+#/   --issuer=<issuer>           common name of an alternative CA certificate
+#/   --issuer-name=<issuer-name> filename of the alternative CA certificate
+#/   --name=<name>               filename to use (default derived from the certificate common name)
+#/   --no-sign                   do not sign the certificate; stop with a certificate signing request
+#/   --password=<password>       password for the CA private key
+#/   --revoke                    revoke an existing certificate
+#/   --self-signed               generate a self-signed certificate instead of using the CA
+#/   C=<country>                 certificate country (defaults to the CA country)
+#/   ST=<state>                  certificate state (defaults to the CA state)
+#/   L=<locality>                certificate locality (usually a city; defaults to the CA locality)
+#/   O=<organization>            certificate organization (usually a company; defaults to the CA organization)
+#/   CN=<common-name>            certificate common name (usually a domain name)
+#/   +<dns>                      add a DNS name to the certificate's subject alternative names
+#/   +<ip>                       add an IP address to the certificate's subject alternative names
 
 set -e
 
@@ -27,10 +30,15 @@ do
     case "$1" in
         --bits) BITS="$2" shift 2;;
         --bits=*) BITS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --ca) CA="--ca" shift;;
         --days) DAYS="$2" shift 2;;
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+        --issuer) ISSUER="$2" shift 2;;
+        --issuer=*) ISSUER="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --issuer-name) ISSUER_NAME="$2" shift 2;;
+        --issuer-name=*) ISSUER_NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --no-sign) NO_SIGN="--no-sign" shift;;
@@ -63,7 +71,7 @@ fi
 
 if [ "$REVOKE" ]
 then
-    certified-revoke --db="$DB" --password="$PASSWORD" CN="$CN"
+    certified-revoke --db="$DB" --issuer="$ISSUER" --issuer-name="$ISSUER_NAME" --password="$PASSWORD" CN="$CN"
     git rm -q "certs/$NAME.crt" "$NAME.cnf" "$NAME.csr" "private/$NAME.key"
     git add "."
     git commit -m"$MESSAGE" -q
@@ -73,7 +81,7 @@ then
     exit
 fi
 
-certified-csr --bits="$BITS" --days="$DAYS" --db="$DB" --name="$NAME" C="$C" CN="$CN" L="$L" O="$O" ST="$ST" $SAN
+certified-csr --bits="$BITS" $CA --days="$DAYS" --db="$DB" --issuer="$ISSUER" --issuer-name="$ISSUER_NAME" --name="$NAME" C="$C" CN="$CN" L="$L" O="$O" ST="$ST" $SAN
 
 if [ -z "$NO_SIGN" ]
 then certified-crt --days="$DAYS" --db="$DB" --name="$NAME" --password="$PASSWORD" $SELF_SIGNED CN="$CN"

@@ -1,17 +1,20 @@
 #!/bin/sh
 
-#/ Usage: certified-csr [--bits=<bits>] [--days=<days>] [--db=<db>] [--name=<name>] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
-#/   --bits=<bits>    bits to use for the private key (defaults to 2048)
-#/   --days=<days>    days until the certificate expires (defaults to 3650)
-#/   --db=<db>        OpenSSL database directory
-#/   --name=<name>    filename to use (default derived from the certificate common name)
-#/   C=<country>      certificate country (defaults to the CA country)
-#/   ST=<state>       certificate state (defaults to the CA state)
-#/   L=<locality>     certificate locality (usually a city; defaults to the CA locality)
-#/   O=<organization> certificate organization (usually a company; defaults to the CA organization)
-#/   CN=<common-name> certificate common name (usually a domain name)
-#/   +<dns>           add a DNS name to the certificate's subject alternative names
-#/   +<ip>            add an IP address to the certificate's subject alternative names
+#/ Usage: certified-csr [--bits=<bits>] [--ca] [--days=<days>] [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--name=<name>] [C=<country>] [ST=<state>] [L=<locality>] [O=<organization>] CN=<common-name> [+<dns>[...]] [+<ip>[...]]
+#/   --bits=<bits>               bits to use for the private key (defaults to 2048)
+#/   --ca                        request that this certificate be a CA certificate
+#/   --days=<days>               days until the certificate expires (defaults to 3650)
+#/   --db=<db>                   OpenSSL database directory
+#/   --issuer=<issuer>           common name of an alternative CA certificate
+#/   --issuer-name=<issuer-name> filename of the alternative CA certificate
+#/   --name=<name>               filename to use (default derived from the certificate common name)
+#/   C=<country>                 certificate country (defaults to the CA country)
+#/   ST=<state>                  certificate state (defaults to the CA state)
+#/   L=<locality>                certificate locality (usually a city; defaults to the CA locality)
+#/   O=<organization>            certificate organization (usually a company; defaults to the CA organization)
+#/   CN=<common-name>            certificate common name (usually a domain name)
+#/   +<dns>                      add a DNS name to the certificate's subject alternative names
+#/   +<ip>                       add an IP address to the certificate's subject alternative names
 
 set -e
 
@@ -24,10 +27,15 @@ do
     case "$1" in
         --bits) BITS="$2" shift 2;;
         --bits=*) BITS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --ca) CA="--ca" shift;;
         --days) DAYS="$2" shift 2;;
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+        --issuer) ISSUER="$2" shift 2;;
+        --issuer=*) ISSUER="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --issuer-name) ISSUER_NAME="$2" shift 2;;
+        --issuer-name=*) ISSUER_NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
@@ -55,6 +63,9 @@ fi
 if is_dns "$CN"
 then SAN_DNS="$CN $SAN_DNS"
 fi
+if [ -z "$ISSUER_NAME" ]
+then ISSUER_NAME="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
+fi
 
 mkdir -p "$DB/private"
 cd "$DB"
@@ -80,7 +91,7 @@ log "configuring OpenSSL"
 default_ca = certified
 
 [certified]
-certificate = certs/ca.crt
+certificate = certs/${ISSUER_NAME:-"ca"}.crt
 copy_extensions = copy
 database = ca.db
 default_days = $DAYS
@@ -88,7 +99,7 @@ default_md = sha1
 dir = .
 new_certs_dir = certs
 policy = policy_match
-private_key = private/ca.key
+private_key = private/${ISSUER_NAME:-"ca"}.key
 serial = ca.db.serial
 unique_subject = yes
 
@@ -99,14 +110,6 @@ EOF
     if_echo "$L" "L = $L"
     if_echo "$O" "O = $O"
     echo "CN = $CN"
-    cat <<EOF
-[ext]
-extendedKeyUsage = serverAuth, clientAuth
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-EOF
-    if [ "$SAN_DNS" -o "$SAN_IP" ]
-    then echo "subjectAltName = @san"
-    fi
     cat <<EOF
 
 [policy_match]
@@ -123,7 +126,6 @@ default_bits = $BITS
 default_md = sha1
 distinguished_name = dn
 prompt = no
-req_extensions = ext
 EOF
     if [ "$SAN_DNS" -o "$SAN_IP" ]
     then cat <<EOF
@@ -145,8 +147,22 @@ EOF
     done
     cat <<EOF
 
-[v3_ca]
+[x509_extensions]
 EOF
+    if [ "$CA" ]
+    then echo "basicConstraints = CA:TRUE, pathlen:0"
+    else echo "basicConstraints = CA:FALSE"
+    fi
+    cat <<EOF
+extendedKeyUsage = clientAuth, codeSigning, emailProtection, serverAuth, timeStamping
+EOF
+    if [ "$CA" ]
+    then echo "keyUsage = cRLSign, digitalSignature, keyAgreement, keyCertSign, keyEncipherment, nonRepudiation"
+    else echo "keyUsage = digitalSignature, keyAgreement, keyEncipherment, nonRepudiation"
+    fi
+    if [ "$SAN_DNS" -o "$SAN_IP" ]
+    then echo "subjectAltName = @san"
+    fi
 } >"$NAME.cnf"
 
 log "generating RSA private key"

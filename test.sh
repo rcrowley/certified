@@ -5,11 +5,19 @@ export PATH="$(cd "$(dirname "$0")" && pwd)/bin:$PATH"
 cd "$(mktemp -d)"
 trap "rm -rf \"$PWD\"" EXIT INT QUIT TERM
 
+# Convert the decimal serial number from x509(1) to hex for crl(1).
+serial() {
+    printf "%02X" "$(
+        openssl x509 -in "$1" -noout -text |
+        awk '/Serial Number:/ {print $3}'
+    )"
+}
+
 # Test that you don't need a CA to generate a CSR.
 certified-csr C="US" ST="CA" L="San Francisco" O="Certified" CN="No CA"
 openssl req -in "etc/ssl/no-ca.csr" -noout -text |
 grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=No CA"
-test ! -f "etc/certs/no-ca.crt"
+test ! -f "etc/ssl/certs/no-ca.crt"
 
 # Test that you don't need a CA to self-sign a certificate.
 certified-crt --self-signed CN="No-CA"
@@ -49,14 +57,19 @@ openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Public-Key: (2048 bit)"
+openssl verify "etc/ssl/certs/certificate.crt" |
+grep -q "error 20"
+openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/certificate.crt" |
+grep -q "OK"
 
 # Test that we can't reissue a certificate without revoking it first.
 certified CN="Certificate" && false
 
 # Test that we can revoke and reissue a certificate.
+SERIAL="$(serial "etc/ssl/certs/certificate.crt")"
 certified --password="password" --revoke CN="Certificate"
 openssl crl -in "etc/ssl/crl/ca.crl" -noout -text |
-grep -q "Revoked Certificates:"
+grep -q "Serial Number: $SERIAL"
 certified --password="password" CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
@@ -69,7 +82,7 @@ grep -q "Public-Key: (4096 bit)"
 # Test that we can generate certificates only valid until tomorrow.
 certified --days="1" --password="password" CN="Tomorrow"
 openssl x509 -in "etc/ssl/certs/tomorrow.crt" -noout -text |
-grep -q "$(date -d"tomorrow" +"%b %e %H:%M:%S %Y")"
+grep -E -q "Not After : $(date -d"tomorrow" +"%b %e %H:%M:[0-6][0-9] %Y")"
 
 # Test that we can change the name of the certificate file.
 certified --name="filename" --password="password" CN="certname"
@@ -95,6 +108,31 @@ grep -F -q "DNS:*.example.com"
 
 # Test that we can't add double DNS wildcards to a certificate.
 certified CN="Double Wildcard" +"*.*.example.com" && false
+
+# Test that we can delegate signing to an alternative CA.
+certified --ca --password="password" CN="Sub CA"
+openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
+grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
+grep -q "Subject: CN=Sub CA"
+openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/sub-ca.crt" |
+grep -q "OK"
+certified --issuer="Sub CA" CN="Sub Certificate"
+openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
+grep -q "Issuer: CN=Sub CA, C=US, L=San Francisco, O=Certified, ST=CA"
+openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
+grep -q "Subject: CN=Sub Certificate"
+openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/sub-certificate.crt" |
+grep -q "error 20"
+cat "etc/ssl/certs/sub-ca.crt" "etc/ssl/certs/ca.crt" >"etc/ssl/certs/sub-ca.chain.crt"
+openssl verify -CAfile "etc/ssl/certs/sub-ca.chain.crt" "etc/ssl/certs/sub-certificate.crt" |
+grep -q "OK"
+
+# Test that we can revoke a certificate signed by an alternative CA.
+SERIAL="$(serial "etc/ssl/certs/sub-certificate.crt")"
+certified --issuer="Sub CA" --revoke CN="Sub Certificate"
+openssl crl -in "etc/ssl/crl/sub-ca.crl" -noout -text |
+grep -q "Serial Number: $SERIAL"
 
 set +x
 echo >&2

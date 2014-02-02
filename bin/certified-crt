@@ -23,7 +23,6 @@ do
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --password|--password) PASSWORD="$2" shift 2;;
         --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --self|--self-sign|--self-signed) SELF_SIGNED="--self-signed" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
@@ -61,7 +60,7 @@ fi
 if [ "$SELF_SIGNED" ]
 then
     log "self-signing the certificate"
-    openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -keyfile "private/$NAME.key" -notext -out "certs/$NAME.crt" -selfsign
+    openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -keyfile "private/$NAME.key" -notext -out "certs/$NAME.crt" -selfsign
 elif [ "$PASSWORD" ]
 then
     log "signing the certificate with the CA"
@@ -69,8 +68,12 @@ then
     then PASSIN="stdin"
     else PASSIN="pass:$PASSWORD"
     fi
-    openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -notext -out "certs/$NAME.crt" -passin "$PASSIN"
-else
+    openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt" -passin "$PASSIN"
+elif grep -q "certificate = certs/ca.crt" "$NAME.cnf"
+then
     log "signing the certificate; please enter the CA password"
-    openssl ca -batch -config "$NAME.cnf" -extensions "v3_ca" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
+    openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
+else
+    log "signing the certificate with an alternative CA"
+    openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
 fi
