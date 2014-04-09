@@ -150,15 +150,15 @@ EOF
 [x509_extensions]
 EOF
     if [ "$CA" ]
-    then echo "basicConstraints = CA:TRUE, pathlen:0"
-    else echo "basicConstraints = CA:FALSE"
+    then echo "basicConstraints = critical, CA:TRUE, pathlen:0"
+    else echo "basicConstraints = critical, CA:FALSE"
     fi
     cat <<EOF
-extendedKeyUsage = clientAuth, codeSigning, emailProtection, serverAuth, timeStamping
+extendedKeyUsage = clientAuth, serverAuth
 EOF
     if [ "$CA" ]
-    then echo "keyUsage = cRLSign, digitalSignature, keyAgreement, keyCertSign, keyEncipherment, nonRepudiation"
-    else echo "keyUsage = digitalSignature, keyAgreement, keyEncipherment, nonRepudiation"
+    then echo "keyUsage = critical, cRLSign, keyCertSign, nonRepudiation"
+    else echo "keyUsage = critical, digitalSignature, keyAgreement, keyEncipherment, nonRepudiation"
     fi
     if [ "$SAN_DNS" -o "$SAN_IP" ]
     then echo "subjectAltName = @san"

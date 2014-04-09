@@ -71,7 +71,8 @@ distinguished_name = dn
 prompt = no
 
 [x509_extensions]
-basicConstraints = CA:TRUE, pathlen:1
+basicConstraints = critical, CA:TRUE, pathlen:1
+keyUsage = critical, cRLSign, keyCertSign, nonRepudiation
 EOF
 } >"ca.cnf"
 
