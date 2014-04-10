@@ -44,7 +44,7 @@ TODO
 * Example TLS servers that use one of these certificates (in various languages).
 * Help users with PFS.
 * Help users with session resumption.
-* OSCP responder support.
+* Help users run OSCP responders.
 
 TODONE
 ------
@@ -67,3 +67,4 @@ TODONE
 * Document GPG-encrypted backups of your CA.
 * YAML generator for use with Hiera/Puppet.
 * Document how to run an autosigning sub-CA.
+* Tag certificates with CRL distribution points and OCSP responder URLs.
