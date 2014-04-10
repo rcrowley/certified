@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#/ Usage: certified-ls [--db=<db>]
+#/   --db=<db> OpenSSL database directory
+
+set -e
+
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
+
+SAN=""
+while [ "$#" -gt 0 ]
+do
+    case "$1" in
+        --db) DB="$2" shift 2;;
+        --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
+		-h|--help) usage 0;;
+		-*) usage 1;;
+		*) break;;
+    esac
+done
+
+mkdir -p "$DB"
+cd "$DB"
+
+{
+    openssl x509 -in "certs/ca.crt" -noout -text |
+    grep "Subject:"
+    find "certs" -name "*.pem" |
+    xargs -I"_" openssl x509 -in "_" -noout -text |
+    grep "Subject:"
+} |
+grep -E -o "CN=[^,]+" |
+cut -d"=" -f"2"

@@ -1,0 +1,32 @@
+# certified-ls(1) -- list certificate common names
+
+## SYNOPSIS
+
+`certified-ls` [`--db`=_db_]
+
+## DESCRIPTION
+
+List the common names of the CA in _db_ and each certificate it has signed.
+
+## OPTIONS
+
+* `--db`=_db_:
+  OpenSSL database directory (defaults to _etc/ssl_).
+
+## THEME SONG
+
+Led Zeppelin - "Fool in the Rain"
+
+## AUTHOR
+
+Richard Crowley <r@rcrowley.org>
+
+## SEE ALSO
+
+`certified`(1), `certified-ca`(1), `certified-yaml`(1)
+
+`certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
+
+`openssl`(1), `x509`(1)
+
+<https://github.com/rcrowley/certified/wiki>
