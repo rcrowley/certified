@@ -27,7 +27,7 @@ openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
 grep -q "Subject: CN=No CA, C=US, L=San Francisco, O=Certified, ST=CA"
 
 # Test that we can generate a CA even after self-signing a certificate.
-certified-ca --crl-url="http://example.com/ca.crl" --password="password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
+certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.example.com" --password="password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
@@ -35,6 +35,8 @@ grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -A"3" "X509v3 CRL Distribution Points" |
 grep -q "http://example.com/ca.crl"
+openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
+grep -q "OCSP - URI:http://ocsp.example.com"
 
 # Test that we can't generate another CA.
 certified-ca C="US" ST="CA" L="San Francisco" O="Certified" CN="New CA" &&

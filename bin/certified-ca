@@ -1,10 +1,11 @@
 #!/bin/sh
 
-#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--password=<password>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
+#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--ocsp-url=<ocsp-url>] [--password=<password>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
 #/   --bits=<bits>         bits to use for the private key (defaults to 2048)
 #/   --crl-url=<crl-url>   CRL distribution URL
 #/   --days=<days>         days until the certificate expires (defaults to 3650)
 #/   --db=<db>             OpenSSL database directory (defaults to etc/ssl)
+#/   --ocsp-url=<ocsp-url> OCSP responder URL
 #/   --password=<password> password for the CA private key
 #/   C=<country>           certificate country
 #/   ST=<state>            certificate state (optional)
@@ -27,6 +28,8 @@ do
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --ocsp-url) OCSP_URL="$2" shift 2;;
+        --ocsp-url=*) OCSP_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --password) PASSWORD="$2" shift 2;;
         --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
@@ -74,8 +77,9 @@ distinguished_name = dn
 prompt = no
 
 [x509_extensions]
-basicConstraints = critical, CA:TRUE, pathlen:1
 EOF
+    if_echo "$OCSP_URL" "authorityInfoAccess = OCSP;URI:$OCSP_URL"
+    echo "basicConstraints = critical, CA:TRUE, pathlen:1"
     if_echo "$CRL_URL" "crlDistributionPoints = URI:$CRL_URL"
     cat <<EOF
 keyUsage = critical, cRLSign, keyCertSign, nonRepudiation
@@ -105,6 +109,7 @@ fi
 : \${BITS:="$BITS"}
 : \${CRL_URL:="$CRL_URL"}
 : \${DAYS:="$DAYS"}
+: \${OCSP_URL:="$OCSP_URL"}
 
 EOF
     if_echo "$C" ": \${C:=\"$C\"}"
