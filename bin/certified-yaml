@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #/ Usage: certified-yaml [--db=<db>]
-#/   --db=<db>             OpenSSL database directory
+#/   --db=<db> OpenSSL database directory
 
 set -e
 
@@ -24,7 +24,7 @@ while read PATHNAME
 do
     NAME="$(basename "$PATHNAME" ".crt")"
     echo "$NAME.crt: |"
-    cat "$PATHNAME" | sed "s/^/  /"
+    sed "s/^/  /" "$PATHNAME"
     if [ "$NAME" != "ca" ]
     then
         echo "$NAME.key: |"
