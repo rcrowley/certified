@@ -57,6 +57,10 @@ if [ ! -f "ca.db.serial" ]
 then echo "01" >"ca.db.serial"
 fi
 
+if [ -z "$SELF_SIGNED" ]
+then sed -i "s/#authorityKeyIdentifier/authorityKeyIdentifier/" "$NAME.cnf"
+fi
+
 if [ "$SELF_SIGNED" ]
 then
     log "self-signing the certificate"

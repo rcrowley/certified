@@ -71,7 +71,6 @@ distinguished_name = dn
 prompt = no
 
 [x509_extensions]
-authorityKeyIdentifier = keyid:always, issuer:always
 basicConstraints = critical, CA:TRUE, pathlen:1
 keyUsage = critical, cRLSign, keyCertSign, nonRepudiation
 subjectKeyIdentifier = hash

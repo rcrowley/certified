@@ -148,7 +148,7 @@ EOF
     cat <<EOF
 
 [x509_extensions]
-authorityKeyIdentifier = keyid:always, issuer:always
+#authorityKeyIdentifier = keyid:always, issuer:always
 EOF
     if [ "$CA" ]
     then echo "basicConstraints = critical, CA:TRUE, pathlen:0"
