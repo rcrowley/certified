@@ -75,9 +75,6 @@ then
     git rm -q "certs/$NAME.crt" "$NAME.cnf" "$NAME.csr" "private/$NAME.key"
     git add "."
     git commit -m"$MESSAGE" -q
-    echo >&2
-    log "install this certificate revocation list on your server"
-    cat "crl/ca.crl"
     exit
 fi
 

@@ -72,3 +72,7 @@ else
     log "generating ca.crl; please enter the CA password"
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl"
 fi
+
+echo >&2
+log "install this certificate revocation list at ${CRL_URL:-"your CRL distribution URL"}"
+cat "crl/ca.crl"

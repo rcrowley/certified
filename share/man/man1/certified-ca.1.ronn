@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-ca` [`--bits`=_bits_] [`--days`=_days_] [`--db`=_db_] [`--password`=_password_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
+`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--password`=_password_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -14,6 +14,8 @@ _db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certifi
 
 * `--bits`=_bits_:
   Bits to use for the private key (defaults to _2048_).
+* `--crl-url`=_crl-url_:
+  CRL distribution URL.
 * `--days`=_days_:
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:

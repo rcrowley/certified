@@ -1,7 +1,8 @@
 #!/bin/sh
 
-#/ Usage: certified-ca [--bits=<bits>] [--days=<days>] [--db=<db>] [--password=<password>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
+#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--password=<password>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
 #/   --bits=<bits>         bits to use for the private key (defaults to 2048)
+#/   --crl-url=<crl-url>   CRL distribution URL
 #/   --days=<days>         days until the certificate expires (defaults to 3650)
 #/   --db=<db>             OpenSSL database directory (defaults to etc/ssl)
 #/   --password=<password> password for the CA private key
@@ -20,6 +21,8 @@ do
     case "$1" in
         --bits) BITS="$2" shift 2;;
         --bits=*) BITS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --crl-url) CRL_URL="$2" shift 2;;
+        --crl-url=*) CRL_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --days) DAYS="$2" shift 2;;
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
@@ -72,6 +75,9 @@ prompt = no
 
 [x509_extensions]
 basicConstraints = critical, CA:TRUE, pathlen:1
+EOF
+    if_echo "$CRL_URL" "crlDistributionPoints = URI:$CRL_URL"
+    cat <<EOF
 keyUsage = critical, cRLSign, keyCertSign, nonRepudiation
 subjectKeyIdentifier = hash
 EOF
@@ -97,6 +103,7 @@ fi
 {
     cat <<EOF
 : \${BITS:="$BITS"}
+: \${CRL_URL:="$CRL_URL"}
 : \${DAYS:="$DAYS"}
 
 EOF
