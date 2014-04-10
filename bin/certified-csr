@@ -148,15 +148,15 @@ EOF
     cat <<EOF
 
 [x509_extensions]
-#authorityKeyIdentifier = keyid:always, issuer:always
 EOF
+    if_echo "$OCSP_URL" "authorityInfoAccess = OCSP;URI:$OCSP_URL"
+    echo "#authorityKeyIdentifier = keyid:always, issuer:always"
     if [ "$CA" ]
     then echo "basicConstraints = critical, CA:TRUE, pathlen:0"
     else echo "basicConstraints = critical, CA:FALSE"
     fi
-    cat <<EOF
-extendedKeyUsage = clientAuth, serverAuth
-EOF
+    if_echo "$CRL_URL" "crlDistributionPoints = URI:$CRL_URL"
+    echo "extendedKeyUsage = clientAuth, serverAuth"
     if [ "$CA" ]
     then echo "keyUsage = critical, cRLSign, keyCertSign, nonRepudiation"
     else echo "keyUsage = critical, digitalSignature, keyAgreement, keyEncipherment, nonRepudiation"

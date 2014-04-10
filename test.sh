@@ -62,6 +62,11 @@ openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Public-Key: (2048 bit)"
+openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
+grep -A"3" "X509v3 CRL Distribution Points" |
+grep -q "http://example.com/ca.crl"
+openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
+grep -q "OCSP - URI:http://ocsp.example.com"
 openssl verify "etc/ssl/certs/certificate.crt" |
 grep -q "error 20"
 openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/certificate.crt" |
