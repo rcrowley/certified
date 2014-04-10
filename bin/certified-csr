@@ -148,6 +148,7 @@ EOF
     cat <<EOF
 
 [x509_extensions]
+authorityKeyIdentifier = keyid:always, issuer:always
 EOF
     if [ "$CA" ]
     then echo "basicConstraints = critical, CA:TRUE, pathlen:0"
@@ -163,6 +164,7 @@ EOF
     if [ "$SAN_DNS" -o "$SAN_IP" ]
     then echo "subjectAltName = @san"
     fi
+    echo "subjectKeyIdentifier = hash"
 } >"$NAME.cnf"
 
 log "generating RSA private key"
