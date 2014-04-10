@@ -57,7 +57,7 @@ Richard Crowley <r@rcrowley.org>
 
 ## SEE ALSO
 
-`certified-ca`(1), `certified-yaml`(1)
+`certified-ca`(1), `certified-ls`(1), `certified-yaml`(1)
 
 `certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
 

@@ -23,8 +23,10 @@ Richard Crowley <r@rcrowley.org>
 
 ## SEE ALSO
 
-`certified`(1), `certified-ca`(1)
+`certified`(1), `certified-ca`(1), `certified-ls`(1)
 
 `certified-csr`(1), `certified-crt`(1), `certified-revoke`(1)
+
+`openssl`(1), `x509`(1)
 
 <https://github.com/rcrowley/certified/wiki>

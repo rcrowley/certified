@@ -35,6 +35,6 @@ Richard Crowley <r@rcrowley.org>
 
 `certified-csr`(1), `certified-crt`(1)
 
-`openssl`(1), `ca`(1), `x509`(1)
+`openssl`(1), `ca`(1), `crl`(1), `x509`(1)
 
 <https://github.com/rcrowley/certified/wiki>
