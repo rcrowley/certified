@@ -20,7 +20,7 @@ grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=No CA"
 test ! -f "etc/ssl/certs/no-ca.crt"
 
 # Test that you don't need a CA to self-sign a certificate.
-certified-crt --self-signed CN="No-CA"
+certified-crt --self-signed CN="No CA"
 openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
 grep -q "Issuer: CN=No CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
