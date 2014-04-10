@@ -1,7 +1,7 @@
 set -e
 
-BITS=2048
-DAYS=3650
+BITS=4096
+DAYS=365
 DB="$PWD/etc/ssl"
 
 # Prefer to find other certified-* tools in the same directory as this one.
