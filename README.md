@@ -68,3 +68,4 @@ TODONE
 * YAML generator for use with Hiera/Puppet.
 * Document how to run an autosigning sub-CA.
 * Tag certificates with CRL distribution points and OCSP responder URLs.
+* Command for listing every certificate to support automation.
