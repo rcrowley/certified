@@ -1,16 +1,16 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "CERTIFIED\-YAML" "1" "April 2014" "" "Certified"
+.TH "CERTIFIED\-LS" "1" "April 2014" "" "Certified"
 .
 .SH "NAME"
-\fBcertified\-yaml\fR \- generate Hiera\-compatible YAML
+\fBcertified\-ls\fR \- list certificate common names
 .
 .SH "SYNOPSIS"
-\fBcertified\-yaml\fR [\fB\-\-db\fR=\fIdb\fR]
+\fBcertified\-ls\fR [\fB\-\-db\fR=\fIdb\fR]
 .
 .SH "DESCRIPTION"
-Generate Hiera\-compatible YAML containing all certificates and all private keys except the CA private key\. The YAML is written to standard output\.
+List the common names of the CA in \fIdb\fR and each certificate it has signed\.
 .
 .SH "OPTIONS"
 .
@@ -25,7 +25,7 @@ Led Zeppelin \- "Fool in the Rain"
 Richard Crowley \fIr@rcrowley\.org\fR
 .
 .SH "SEE ALSO"
-\fBcertified\fR(1), \fBcertified\-ca\fR(1), \fBcertified\-ls\fR(1)
+\fBcertified\fR(1), \fBcertified\-ca\fR(1), \fBcertified\-yaml\fR(1)
 .
 .P
 \fBcertified\-csr\fR(1), \fBcertified\-crt\fR(1), \fBcertified\-revoke\fR(1)
