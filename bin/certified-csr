@@ -109,8 +109,8 @@ EOF
     if_echo "$ST" "ST = $ST"
     if_echo "$L" "L = $L"
     if_echo "$O" "O = $O"
-    echo "CN = $CN"
     cat <<EOF
+CN = $CN
 
 [policy_match]
 commonName = supplied
