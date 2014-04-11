@@ -34,6 +34,10 @@ grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
+grep -E -q "Not After : $(date -d"+3650 days" +"%b %e %H:%M:[0-6][0-9] %Y")"
+openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
+grep -q "Public-Key: (4096 bit)"
+openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -A"3" "X509v3 CRL Distribution Points" |
 grep -q "http://example.com/root-ca.crl"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
@@ -61,6 +65,8 @@ openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
+openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
+grep -E -q "Not After : $(date -d"+365 days" +"%b %e %H:%M:[0-6][0-9] %Y")"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Public-Key: (2048 bit)"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |

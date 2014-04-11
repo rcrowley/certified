@@ -64,6 +64,32 @@ fi
 
 {
     cat <<EOF
+: \${BITS:="$BITS"}
+: \${CRL_URL:="$CRL_URL"}
+: \${DAYS:="$DAYS"}
+: \${OCSP_URL:="$OCSP_URL"}
+: \${ROOT_CRL_URL:="$ROOT_CRL_URL"}
+
+EOF
+    if_echo "$C" ": \${C:=\"$C\"}"
+    if_echo "$ST" ": \${ST:=\"$ST\"}"
+    if_echo "$L" ": \${L:=\"$L\"}"
+    if_echo "$O" ": \${O:=\"$O\"}"
+} >"defaults.sh"
+
+if [ "$BITS" -lt 4096 ]
+then
+    log "generating 4096 bit keys for the CA but defaulting to $BITS for other certificates"
+    BITS=4096
+fi
+if [ "$DAYS" -lt 3650 ]
+then
+    log "the CA certificates will expire in 3650 days instead of $DAYS"
+    DAYS=3650
+fi
+
+{
+    cat <<EOF
 [dn]
 EOF
     if_echo "$C" "C = $C"
@@ -104,21 +130,6 @@ else
     log "signing the CA certificate; please enter the CA password"
     openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
 fi
-
-{
-    cat <<EOF
-: \${BITS:="$BITS"}
-: \${CRL_URL:="$CRL_URL"}
-: \${DAYS:="$DAYS"}
-: \${OCSP_URL:="$OCSP_URL"}
-: \${ROOT_CRL_URL:="$ROOT_CRL_URL"}
-
-EOF
-    if_echo "$C" ": \${C:=\"$C\"}"
-    if_echo "$ST" ": \${ST:=\"$ST\"}"
-    if_echo "$L" ": \${L:=\"$L\"}"
-    if_echo "$O" ": \${O:=\"$O\"}"
-} >"defaults.sh"
 
 certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="$DB" --issuer="root-ca" --name="ca" --ocsp-url="$OCSP_URL" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
 certified-crt --days="$DAYS" --db="$DB" --name="ca" --password="$PASSWORD" CN="$CN"
