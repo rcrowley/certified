@@ -97,6 +97,7 @@ then
     log "relay this certificate signing request to your certificate vendor"
     cat "$NAME.csr"
 else
-    log "install this certificate on your server"
+    log "install this certificate chain on your server"
     cat "certs/$NAME.crt"
+    cat "certs/ca.crt"
 fi

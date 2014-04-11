@@ -25,7 +25,7 @@ do
     NAME="$(basename "$PATHNAME" ".crt")"
     echo "$NAME.crt: |"
     sed "s/^/  /" "$PATHNAME"
-    if [ "$NAME" != "ca" ]
+    if [ "$NAME" != "root-ca" -a "$NAME" != "ca" ]
     then
         echo "$NAME.key: |"
         cat "$DB/private/$NAME.key" | sed "s/^/  /"

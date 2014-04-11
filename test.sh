@@ -32,7 +32,7 @@ certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.examp
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
-grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -A"3" "X509v3 CRL Distribution Points" |
 grep -q "http://example.com/ca.crl"
@@ -43,7 +43,7 @@ grep -q "OCSP - URI:http://ocsp.example.com"
 certified-ca C="US" ST="CA" L="San Francisco" O="Certified" CN="New CA" &&
 false
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
-grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 
 # Test that we can still self-sign a certificate.
 certified --self-signed CN="Self-Signed Certificate"
@@ -58,7 +58,7 @@ certified --password="password" CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Version: 3"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
-grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
@@ -70,7 +70,8 @@ openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "OCSP - URI:http://ocsp.example.com"
 openssl verify "etc/ssl/certs/certificate.crt" |
 grep -q "error 20"
-openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/certificate.crt" |
+cat "etc/ssl/certs/ca.crt" "etc/ssl/certs/root-ca.crt" >"etc/ssl/certs/ca.chain.crt"
+openssl verify -CAfile "etc/ssl/certs/ca.chain.crt" "etc/ssl/certs/certificate.crt" |
 grep -q "OK"
 
 # Test that we can't reissue a certificate without revoking it first.
@@ -123,10 +124,11 @@ certified CN="Double Wildcard" +"*.*.example.com" && false
 # Test that we can delegate signing to an alternative CA.
 certified --ca --password="password" CN="Sub CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
-grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
 grep -q "Subject: CN=Sub CA"
-openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/sub-ca.crt" |
+cat "etc/ssl/certs/ca.crt" "etc/ssl/certs/root-ca.crt" >"etc/ssl/certs/ca.chain.crt"
+openssl verify -CAfile "etc/ssl/certs/ca.chain.crt" "etc/ssl/certs/sub-ca.crt" |
 grep -q "OK"
 certified --issuer="Sub CA" CN="Sub Certificate"
 openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
@@ -135,7 +137,7 @@ openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
 grep -q "Subject: CN=Sub Certificate"
 openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/sub-certificate.crt" |
 grep -q "error 20"
-cat "etc/ssl/certs/sub-ca.crt" "etc/ssl/certs/ca.crt" >"etc/ssl/certs/sub-ca.chain.crt"
+cat "etc/ssl/certs/sub-ca.crt" "etc/ssl/certs/ca.crt" "etc/ssl/certs/root-ca.crt" >"etc/ssl/certs/sub-ca.chain.crt"
 openssl verify -CAfile "etc/ssl/certs/sub-ca.chain.crt" "etc/ssl/certs/sub-certificate.crt" |
 grep -q "OK"
 

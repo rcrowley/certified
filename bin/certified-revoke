@@ -67,9 +67,9 @@ then
     log "generating $ISSUER_NAME.crl"
     openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl"
 else
-    log "revoking $NAME.crt; please enter the CA password"
+    log "revoking $NAME.crt"
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -keyfile "private/ca.key" -revoke "certs/$NAME.crt"
-    log "generating ca.crl; please enter the CA password"
+    log "generating ca.crl"
     openssl ca -cert "certs/ca.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/ca.key" -out "crl/ca.crl"
 fi
 

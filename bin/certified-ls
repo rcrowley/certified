@@ -23,6 +23,8 @@ mkdir -p "$DB"
 cd "$DB"
 
 {
+    openssl x509 -in "certs/root-ca.crt" -noout -text |
+    grep "Subject:"
     openssl x509 -in "certs/ca.crt" -noout -text |
     grep "Subject:"
     find "certs" -name "*.pem" |

@@ -75,7 +75,7 @@ then
     openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt" -passin "$PASSIN"
 elif grep -q "certificate = certs/ca.crt" "$NAME.cnf"
 then
-    log "signing the certificate; please enter the CA password"
+    log "signing the certificate"
     openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt"
 else
     log "signing the certificate with an alternative CA"

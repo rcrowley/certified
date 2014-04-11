@@ -50,7 +50,7 @@ cd "$DB"
 if [ -f "certs/ca.crt" ]
 then die "CA already exists in $DB"
 fi
-if [ -f "private/ca.key" ]
+if [ -f "private/root-ca.key" -o -f "certs/root-ca.crt" -o -f "private/ca.key" ]
 then die "CA already partially exists in $DB"
 fi
 
@@ -94,14 +94,14 @@ then
     fi
     PASSIN="pass:$PASSWORD" PASSOUT="pass:$PASSWORD"
     log "generating RSA private key"
-    openssl genrsa -des3 -out "private/ca.key" -passout "$PASSOUT" "$BITS"
+    openssl genrsa -des3 -out "private/root-ca.key" -passout "$PASSOUT" "$BITS"
     log "signing the CA certificate"
-    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/ca.key" -new -out "certs/ca.crt" -passin "$PASSIN" -x509
+    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -passin "$PASSIN" -x509
 else
     log "generating RSA private key; please choose and confirm a password"
-    openssl genrsa -des3 -out "private/ca.key" "$BITS"
+    openssl genrsa -des3 -out "private/root-ca.key" "$BITS"
     log "signing the CA certificate; please enter the CA password"
-    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/ca.key" -new -out "certs/ca.crt" -x509
+    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
 fi
 
 {
@@ -118,10 +118,13 @@ EOF
     if_echo "$O" ": \${O:=\"$O\"}"
 } >"defaults.sh"
 
+certified-csr --bits="$BITS" --ca --days="$DAYS" --db="$DB" --issuer="root-ca" --name="ca" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
+certified-crt --days="$DAYS" --db="$DB" --name="ca" --password="$PASSWORD" CN="$CN"
+
 git init -q
 git add "."
 git commit -m"$MESSAGE" -q
 
 echo >&2
 log "install this certificate on your laptops and servers"
-cat "certs/ca.crt"
+cat "certs/root-ca.crt"
