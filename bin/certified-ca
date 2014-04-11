@@ -124,9 +124,12 @@ certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db=
 certified-crt --days="$DAYS" --db="$DB" --name="ca" --password="$PASSWORD" CN="$CN"
 
 git init -q
+echo "private/root-ca.key" >".gitignore"
 git add "."
 git commit -m"$MESSAGE" -q
 
 echo >&2
 log "install this certificate on your laptops and servers"
 cat "certs/root-ca.crt"
+echo >&2
+log "store $PWD/private/root-ca.key in a very safe place and remove it from here"
