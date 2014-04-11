@@ -78,9 +78,7 @@ prompt = no
 
 [x509_extensions]
 EOF
-    if_echo "$OCSP_URL" "authorityInfoAccess = OCSP;URI:$OCSP_URL"
     echo "basicConstraints = critical, CA:TRUE, pathlen:1"
-    if_echo "$CRL_URL" "crlDistributionPoints = URI:$CRL_URL"
     cat <<EOF
 keyUsage = critical, cRLSign, keyCertSign, nonRepudiation
 subjectKeyIdentifier = hash
