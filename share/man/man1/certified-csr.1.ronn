@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-csr` [`--bits`=_bits_] [`--ca`] [`--days`=_days_] [`--db`=_db_] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
+`certified-csr` [`--bits`=_bits_] [`--ca`] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`--ocsp-url`=_ocsp-url_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
 
 ## DESCRIPTION
 
@@ -16,6 +16,8 @@ Additional DNS names, including wildcards, and IP addresses can be added to the 
   Bits to use for the private key (defaults to _2048_).
 * `--ca`:
   Request that this certificate be a CA certificate.
+* `--crl-url`=_crl-url_:
+  CRL distribution URL for the intermediate CA.
 * `--days`=_days_:
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:
