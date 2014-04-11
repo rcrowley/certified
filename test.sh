@@ -2,9 +2,9 @@ set -e -x
 
 export PATH="$(cd "$(dirname "$0")" && pwd)/bin:$PATH"
 
-TMP="$(mktemp -d "certified-XXXXXX")"
+TMP="$(mktemp -d "$PWD/certified-XXXXXX")"
 cd "$TMP"
-trap "rm -rf \"$PWD\"" EXIT INT QUIT TERM
+trap "rm -rf \"$TMP\"" EXIT INT QUIT TERM
 
 # Convert the decimal serial number from x509(1) to hex for crl(1).
 serial() {
