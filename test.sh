@@ -54,7 +54,7 @@ grep -q "Subject: CN=Self-Signed Certificate"
 
 # Test that we can sign a certificate with our CA and that it has the correct
 # version and bit width.
-certified --password="password" CN="Certificate"
+certified CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Version: 3"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
@@ -79,42 +79,42 @@ certified CN="Certificate" && false
 
 # Test that we can revoke and reissue a certificate.
 SERIAL="$(serial "etc/ssl/certs/certificate.crt")"
-certified --password="password" --revoke CN="Certificate"
+certified --revoke CN="Certificate"
 openssl crl -in "etc/ssl/crl/ca.crl" -noout -text |
 grep -q "Serial Number: $SERIAL"
-certified --password="password" CN="Certificate"
+certified CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
 
 # Test that we can generate 4096-bit certificates.
-certified --bits="4096" --password="password" CN="4096"
+certified --bits="4096" CN="4096"
 openssl x509 -in "etc/ssl/certs/4096.crt" -noout -text |
 grep -q "Public-Key: (4096 bit)"
 
 # Test that we can generate certificates only valid until tomorrow.
-certified --days="1" --password="password" CN="Tomorrow"
+certified --days="1" CN="Tomorrow"
 openssl x509 -in "etc/ssl/certs/tomorrow.crt" -noout -text |
 grep -E -q "Not After : $(date -d"tomorrow" +"%b %e %H:%M:[0-6][0-9] %Y")"
 
 # Test that we can change the name of the certificate file.
-certified --name="filename" --password="password" CN="certname"
+certified --name="filename" CN="certname"
 openssl x509 -in "etc/ssl/certs/filename.crt" -noout -text |
 grep -q "Subject: CN=certname"
 
 # Test that we can add subject alternative names to a certificate.
-certified --password="password" CN="SAN" +"127.0.0.1" +"example.com"
+certified CN="SAN" +"127.0.0.1" +"example.com"
 openssl x509 -in "etc/ssl/certs/san.crt" -noout -text |
 grep -q "DNS:example.com"
 openssl x509 -in "etc/ssl/certs/san.crt" -noout -text |
 grep -q "IP Address:127.0.0.1"
 
 # Test that a valid DNS name as CN is added as a subject alternative name.
-certified --password="password" CN="example.com"
+certified CN="example.com"
 openssl x509 -in "etc/ssl/certs/example.com.crt" -noout -text |
 grep -q "DNS:example.com"
 
 # Test that we can add DNS wildcards to a certificate.
-certified --password="password" CN="Wildcard" +"*.example.com"
+certified CN="Wildcard" +"*.example.com"
 openssl x509 -in "etc/ssl/certs/wildcard.crt" -noout -text |
 grep -F -q "DNS:*.example.com"
 
@@ -122,7 +122,7 @@ grep -F -q "DNS:*.example.com"
 certified CN="Double Wildcard" +"*.*.example.com" && false
 
 # Test that we can delegate signing to an alternative CA.
-certified --ca --password="password" CN="Sub CA"
+certified --ca CN="Sub CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
 grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
