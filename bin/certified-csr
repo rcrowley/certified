@@ -165,7 +165,7 @@ EOF
     echo "extendedKeyUsage = clientAuth, serverAuth"
     if [ "$CA" ]
     then echo "keyUsage = critical, cRLSign, keyCertSign, nonRepudiation"
-    else echo "keyUsage = critical, digitalSignature, keyAgreement, keyEncipherment, nonRepudiation"
+    else echo "keyUsage = critical, digitalSignature, keyEncipherment"
     fi
     if [ "$SAN_DNS" -o "$SAN_IP" ]
     then echo "subjectAltName = @san"
