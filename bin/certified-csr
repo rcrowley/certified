@@ -62,21 +62,19 @@ do
 		*) break;;
     esac
 done
+if [ -f "$DB/defaults.sh" ]
+then . "$DB/defaults.sh"
+fi
 [ "$CN" ] || usage 1
 : ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 if is_dns "$CN"
 then SAN_DNS="$CN $SAN_DNS"
 fi
-if [ -z "$ISSUER_NAME" ]
-then ISSUER_NAME="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
-fi
+: ${ISSUER:="ca"}
+: ${ISSUER_NAME:="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 
-mkdir -p "$DB/private"
+mkdir -p "$DB/.$ISSUER_NAME" "$DB/private"
 cd "$DB"
-
-if [ -f "defaults.sh" ]
-then . "$PWD/defaults.sh"
-fi
 
 if [ -f "certs/$NAME.crt" ]
 then die "certificate $NAME.crt already exists; use --revoke and try again"
@@ -88,6 +86,11 @@ if [ -f "private/$NAME.key" ]
 then die "private key $NAME.key already exists"
 fi
 
+touch "$ISSUER_NAME.db" "$ISSUER_NAME.db.attr"
+if [ ! -f "$ISSUER_NAME.db.serial" ]
+then echo "01" >"$ISSUER_NAME.db.serial"
+fi
+
 log "configuring OpenSSL"
 {
     cat <<EOF
@@ -95,16 +98,16 @@ log "configuring OpenSSL"
 default_ca = certified
 
 [certified]
-certificate = certs/${ISSUER_NAME:-"ca"}.crt
+certificate = certs/$ISSUER_NAME.crt
 copy_extensions = copy
-database = ca.db
+database = $ISSUER_NAME.db
 default_days = $DAYS
 default_md = sha1
 dir = .
-new_certs_dir = certs
+new_certs_dir = .$ISSUER_NAME
 policy = policy_match
-private_key = private/${ISSUER_NAME:-"ca"}.key
-serial = ca.db.serial
+private_key = private/$ISSUER_NAME.key
+serial = $ISSUER_NAME.db.serial
 unique_subject = yes
 
 [dn]
