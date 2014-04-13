@@ -159,6 +159,27 @@ certified --issuer="Sub CA" --revoke CN="Sub Certificate"
 openssl crl -in "etc/ssl/crl/sub-ca.crl" -noout -text |
 grep -q "Serial Number: $SERIAL"
 
+# Test that we can revoke the intermediate CA and can't sign any certificates
+# until it's regenerated.
+SERIAL="$(serial "etc/ssl/certs/ca.crt")"
+certified-ca --password="password" --revoke
+openssl crl -in "etc/ssl/crl/root-ca.crl" -noout -text |
+grep -q "Serial Number: $SERIAL"
+certified CN="Intermediate Revoked" && false
+certified-ca --password="password" CN="Certified CA"
+openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
+grep -A"3" "X509v3 CRL Distribution Points" |
+grep -q "http://example.com/root-ca.crl"
+certified CN="Intermediate Regenerated"
+openssl x509 -in "etc/ssl/certs/intermediate-regenerated.crt" -noout -text |
+grep -A"3" "X509v3 CRL Distribution Points" |
+grep -q "http://example.com/ca.crl"
+openssl verify "etc/ssl/certs/intermediate-regenerated.crt" |
+grep -q "error 20"
+cat "etc/ssl/certs/ca.crt" "etc/ssl/certs/root-ca.crt" >"etc/ssl/certs/ca.chain.crt"
+openssl verify -CAfile "etc/ssl/certs/ca.chain.crt" "etc/ssl/certs/intermediate-regenerated.crt" |
+grep -q "OK"
+
 set +x
 echo >&2
 echo "PASS" >&2
