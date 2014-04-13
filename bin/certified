@@ -57,15 +57,14 @@ do
 		*) break;;
     esac
 done
+if [ -f "$DB/defaults.sh" ]
+then . "$DB/defaults.sh"
+fi
 [ "$CN" ] || usage 1
 : ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 
 mkdir -p "$DB"
 cd "$DB"
-
-if [ -f "defaults.sh" ]
-then . "$PWD/defaults.sh"
-fi
 
 if [ "$REVOKE" ]
 then
