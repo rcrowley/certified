@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`--root-crl-url`=_root-crl-url_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
+`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`--revoke`] [`--root-crl-url`=_root-crl-url_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -24,6 +24,8 @@ _db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certifi
   OCSP responder URL.
 * `--password`=_password_:
   Password for the CA private key.
+* `--revoke`:
+  Revoke an intermediate CA certificate.
 * `--root-crl-url`=_root-crl-url_:
   CRL distribution URL for the root CA.
 * `C`=_country_:

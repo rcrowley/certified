@@ -1,12 +1,13 @@
 #!/bin/sh
 
-#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--ocsp-url=<ocsp-url>] [--password=<password>] [--root-crl-url=<root-crl-url>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
+#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--ocsp-url=<ocsp-url>] [--password=<password>] [--revoke] [--root-crl-url=<root-crl-url>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
 #/   --bits=<bits>                 bits to use for the private key (defaults to 2048)
 #/   --crl-url=<crl-url>           CRL distribution URL for the intermediate CA
 #/   --days=<days>                 days until the certificate expires (defaults to 3650)
 #/   --db=<db>                     OpenSSL database directory (defaults to etc/ssl)
 #/   --ocsp-url=<ocsp-url>         OCSP responder URL
 #/   --password=<password>         password for the CA private key
+#/   --revoke                      revoke an intermediate CA certificate
 #/   --root-crl-url=<root-crl-url> CRL distribution URL for the root CA
 #/   C=<country>                   certificate country
 #/   ST=<state>                    certificate state (optional)
@@ -33,6 +34,7 @@ do
         --ocsp-url=*) OCSP_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --password) PASSWORD="$2" shift 2;;
         --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --revoke) REVOKE="--revoke" shift;;
         --root-crl-url) ROOT_CRL_URL="$2" shift 2;;
         --root-crl-url=*) ROOT_CRL_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
@@ -45,21 +47,36 @@ do
 		*) usage 1;;
     esac
 done
-[ "$C" -a "$L" -a "$CN" ] || usage 1
+if [ -f "$DB/defaults.sh" ]
+then . "$DB/defaults.sh"
+fi
+[ "$C" -a "$L" -a "$CN" -o "$REVOKE" ] || usage 1
 
 mkdir -p "$DB/certs" "$DB/private"
 cd "$DB"
 
+if [ "$REVOKE" ]
+then
+    certified-revoke --db="." --issuer="root-ca" --issuer-name="root-ca" --name="ca" --password="$PASSWORD" CN="ca"
+    git rm -q "certs/ca.crt" "ca.csr" "private/ca.key"
+    git add "."
+    git commit -m"$MESSAGE" -q
+    exit
+fi
+
 if [ -f "certs/ca.crt" ]
 then die "CA already exists in $DB"
 fi
-if [ -f "private/root-ca.key" -o -f "certs/root-ca.crt" -o -f "private/ca.key" ]
+if [ -f "private/ca.key" ]
 then die "CA already partially exists in $DB"
 fi
+if [ -f "private/root-ca.key" -o -f "certs/root-ca.crt" ]
+then log "root CA already exists in $DB; generating intermediate CA"
+fi
 
-touch "ca.db" "ca.db.attr"
-if [ ! -f "ca.db.serial" ]
-then echo "01" >"ca.db.serial"
+touch "root-ca.db" "root-ca.db.attr"
+if [ ! -f "root-ca.db.serial" ]
+then echo "01" >"root-ca.db.serial"
 fi
 
 {
@@ -114,21 +131,24 @@ subjectKeyIdentifier = hash
 EOF
 } >"ca.cnf"
 
-if [ "$PASSWORD" ]
+if [ ! -f "certs/root-ca.crt" ]
 then
-    if [ "$PASSWORD" = "-" ]
-    then read PASSWORD
+    if [ "$PASSWORD" ]
+    then
+        if [ "$PASSWORD" = "-" ]
+        then read PASSWORD
+        fi
+        PASSIN="pass:$PASSWORD" PASSOUT="pass:$PASSWORD"
+        log "generating RSA private key"
+        openssl genrsa -des3 -out "private/root-ca.key" -passout "$PASSOUT" "$BITS"
+        log "signing the CA certificate"
+        openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -passin "$PASSIN" -x509
+    else
+        log "generating RSA private key; please choose and confirm a password"
+        openssl genrsa -des3 -out "private/root-ca.key" "$BITS"
+        log "signing the CA certificate; please enter the CA password"
+        openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
     fi
-    PASSIN="pass:$PASSWORD" PASSOUT="pass:$PASSWORD"
-    log "generating RSA private key"
-    openssl genrsa -des3 -out "private/root-ca.key" -passout "$PASSOUT" "$BITS"
-    log "signing the CA certificate"
-    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -passin "$PASSIN" -x509
-else
-    log "generating RSA private key; please choose and confirm a password"
-    openssl genrsa -des3 -out "private/root-ca.key" "$BITS"
-    log "signing the CA certificate; please enter the CA password"
-    openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
 fi
 
 certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="." --issuer="$CN" --issuer-name="root-ca" --name="ca" --ocsp-url="$OCSP_URL" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
