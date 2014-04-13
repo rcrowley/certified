@@ -63,9 +63,7 @@ do
     esac
 done
 [ "$CN" ] || usage 1
-if [ -z "$NAME" ]
-then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
-fi
+: ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 if is_dns "$CN"
 then SAN_DNS="$CN $SAN_DNS"
 fi

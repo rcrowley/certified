@@ -31,9 +31,7 @@ do
     esac
 done
 [ "$CN" ] || usage 1
-if [ -z "$NAME" ]
-then NAME="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"
-fi
+: ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 
 mkdir -p "$DB/certs"
 cd "$DB"
