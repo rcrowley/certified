@@ -131,8 +131,8 @@ else
     openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
 fi
 
-certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="$DB" --issuer="root-ca" --name="ca" --ocsp-url="$OCSP_URL" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
-certified-crt --days="$DAYS" --db="$DB" --name="ca" --password="$PASSWORD" CN="$CN"
+certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="." --issuer="$CN" --issuer-name="root-ca" --name="ca" --ocsp-url="$OCSP_URL" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
+certified-crt --days="$DAYS" --db="." --name="ca" --password="$PASSWORD" CN="$CN"
 
 git init -q
 echo "private/root-ca.key" >".gitignore"
