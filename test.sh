@@ -8,7 +8,7 @@ trap "rm -rf \"$TMP\"" EXIT INT QUIT TERM
 
 # Convert the decimal serial number from x509(1) to hex for crl(1).
 serial() {
-    printf "%02X" "$(
+    printf "0%X" "$(
         openssl x509 -in "$1" -noout -text |
         awk '/Serial Number:/ {print $3}'
     )"
@@ -55,6 +55,12 @@ openssl x509 -in "etc/ssl/certs/self-signed-certificate.crt" -noout -text |
 grep -q "Issuer: CN=Self-Signed Certificate"
 openssl x509 -in "etc/ssl/certs/self-signed-certificate.crt" -noout -text |
 grep -q "Subject: CN=Self-Signed Certificate"
+
+# Add a bunch of certificates to ensure we can overflow the serial number.
+# This is disabled by default because it takes forever.
+#seq 256 | while read SEQ
+#do certified CN="Certificate $SEQ"
+#done
 
 # Test that we can sign a certificate with our CA and that it has the correct
 # version and bit width.
