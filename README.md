@@ -10,6 +10,15 @@ Installation
 sudo make install
 ```
 
+Or from `packages.rcrowley.org` on Debian or Ubuntu:
+
+```sh
+echo "deb http://packages.rcrowley.org $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/rcrowley.list
+sudo wget -O /etc/apt/trusted.gpg.d/rcrowley.gpg http://packages.rcrowley.org/keyring.gpg
+sudo apt-get update
+sudo apt-get -y install certified
+```
+
 All you need is `/bin/sh` and OpenSSL.
 
 Usage

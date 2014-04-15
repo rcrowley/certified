@@ -7,7 +7,6 @@ libdir=${prefix}/lib
 mandir=${prefix}/share/man
 
 all: certified_$(VERSION)-$(BUILD)_all.deb share/html/*.html
-	$(MAKE) -C share/html
 
 clean:
 
