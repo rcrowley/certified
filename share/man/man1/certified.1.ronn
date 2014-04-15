@@ -53,7 +53,7 @@ Led Zeppelin - "Fool in the Rain"
 
 ## AUTHOR
 
-Richard Crowley <r@rcrowley.org>
+Richard Crowley <<r@rcrowley.org>>
 
 ## SEE ALSO
 
