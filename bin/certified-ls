@@ -22,14 +22,8 @@ done
 mkdir -p "$DB"
 cd "$DB"
 
-{
-    openssl x509 -in "certs/root-ca.crt" -noout -text |
-    grep "Subject:"
-    openssl x509 -in "certs/ca.crt" -noout -text |
-    grep "Subject:"
-    find "certs" -name "*.pem" |
-    xargs -I"_" openssl x509 -in "_" -noout -text |
-    grep "Subject:"
-} |
+find ".ca" -name "*.pem" |
+xargs -I"_" openssl x509 -in "_" -noout -text |
+grep "Subject:" |
 grep -E -o "CN=[^,]+" |
 cut -d"=" -f"2"
