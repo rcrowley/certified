@@ -7,7 +7,7 @@
 \fBcertified\-ca\fR \- generate a CA
 .
 .SH "SYNOPSIS"
-\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] \fBC\fR=\fIcountry\fR [\fBST\fR=\fIstate\fR] \fBL\fR=\fIlocality\fR [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR
+\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] \fBC\fR=\fIcountry\fR [\fBST\fR=\fIstate\fR] \fBL\fR=\fIlocality\fR [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR
 .
 .SH "DESCRIPTION"
 Generate two private keys\. The first is self\-signed to generate the root CA certificate\. It is then used to sign the second to generate the intermediate CA certificate\. The root CA certificate should be installed on laptops and servers\. The intermediate CA signs subsequent certificates and may itself be revoked in the event its private key is compromised\.
@@ -40,6 +40,10 @@ OCSP responder URL\.
 .TP
 \fB\-\-password\fR=\fIpassword\fR
 Password for the CA private key\.
+.
+.TP
+\fB\-\-revoke\fR
+Revoke an intermediate CA certificate\.
 .
 .TP
 \fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR
