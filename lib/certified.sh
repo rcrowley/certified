@@ -9,7 +9,16 @@ export PATH="$(cd "$(dirname "$0")" && pwd):$PATH"
 
 # Take note of the entire command line to use as a Git commit message.  This
 # must be done before any (destructive) option parsing takes place.
-MESSAGE="$0 $*"
+MESSAGE="$0"
+for ARG in "$@"
+do
+    case "$ARG" in
+        "+"*) ARG="+\"$(echo "$ARG" | cut -c"2-")\"";;
+        *"="*) ARG="$(echo "$ARG" | cut -d"=" -f"1")=\"$(echo "$ARG" | cut -d"=" -f"2-")\"";;
+        *" "*) ARG="\"$ARG\"";;
+    esac
+    MESSAGE="$MESSAGE $ARG"
+done
 
 # Log a message and exit non-zero.
 die() {
