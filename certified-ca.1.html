@@ -81,7 +81,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>certified-ca</code> [<code>--bits</code>=<em>bits</em>] [<code>--crl-url</code>=<em>crl-url</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--ocsp-url</code>=<em>ocsp-url</em>] [<code>--password</code>=<em>password</em>] [<code>--root-crl-url</code>=<em>root-crl-url</em>] <code>C</code>=<em>country</em> [<code>ST</code>=<em>state</em>] <code>L</code>=<em>locality</em> [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em></p>
+<p><code>certified-ca</code> [<code>--bits</code>=<em>bits</em>] [<code>--crl-url</code>=<em>crl-url</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--ocsp-url</code>=<em>ocsp-url</em>] [<code>--password</code>=<em>password</em>] [<code>--revoke</code>] [<code>--root-crl-url</code>=<em>root-crl-url</em>] <code>C</code>=<em>country</em> [<code>ST</code>=<em>state</em>] <code>L</code>=<em>locality</em> [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em></p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -98,6 +98,7 @@
 <dt class="flush"><code>--db</code>=<em>db</em></dt><dd>OpenSSL database directory (defaults to <em>etc/ssl</em>).</dd>
 <dt><code>--ocsp-url</code>=<em>ocsp-url</em></dt><dd>OCSP responder URL.</dd>
 <dt><code>--password</code>=<em>password</em></dt><dd>Password for the CA private key.</dd>
+<dt><code>--revoke</code></dt><dd>Revoke an intermediate CA certificate.</dd>
 <dt><code>--root-crl-url</code>=<em>root-crl-url</em></dt><dd>CRL distribution URL for the root CA.</dd>
 <dt><code>C</code>=<em>country</em></dt><dd>Certificate country.</dd>
 <dt><code>ST</code>=<em>state</em></dt><dd>Certificate state.</dd>
@@ -114,7 +115,7 @@
 
 <h2 id="AUTHOR">AUTHOR</h2>
 
-<p>Richard Crowley <a data-bare-link="true" href="&#x6d;&#97;&#105;&#108;&#x74;&#x6f;&#58;&#114;&#64;&#114;&#x63;&#114;&#x6f;&#119;&#x6c;&#x65;&#121;&#x2e;&#111;&#x72;&#x67;">&#x72;&#x40;&#114;&#99;&#114;&#111;&#119;&#x6c;&#101;&#121;&#46;&#111;&#114;&#103;</a></p>
+<p>Richard Crowley <a data-bare-link="true" href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#x72;&#x40;&#114;&#99;&#x72;&#111;&#119;&#x6c;&#101;&#x79;&#46;&#111;&#x72;&#103;">&#x72;&#64;&#114;&#99;&#114;&#111;&#x77;&#108;&#101;&#121;&#x2e;&#x6f;&#x72;&#x67;</a></p>
 
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
