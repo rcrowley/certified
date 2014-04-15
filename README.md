@@ -1,12 +1,16 @@
 Certified
 =========
 
+It's a scary Internet out there.  All your company's internal apps and service-to-service communication should be encrypted.  Certified will help you generate all the certificates you need to make that happen.
+
 Installation
 ------------
 
 ```sh
 sudo make install
 ```
+
+All you need is `/bin/sh` and OpenSSL.
 
 Usage
 -----
@@ -16,6 +20,8 @@ Generate your CA:
 ```sh
 certified-ca C="US" ST="CA" L="San Francisco" O="Example" CN="Example CA"
 ```
+
+You're going to want to trust the root CA certificate on all your laptops and servers.  See [Trust your CA](https://github.com/rcrowley/certified/wiki/Trust-your-CA) in the wiki to learn how.
 
 Generate a wildcard certificate:
 
@@ -35,7 +41,9 @@ Generate a certificate for an IP address:
 certified CN="localhost" +"127.0.0.1"
 ```
 
-The [wiki](https://github.com/rcrowley/certified/wiki) documents common usage patterns and how to use your CA with various browsers, operating systems, and programming languages.
+[Install your certificates](https://github.com/rcrowley/certified/wiki/Install-your-certificates) on all your servers.
+
+The [wiki](https://github.com/rcrowley/certified/wiki) further documents common usage patterns and how to use your CA with various browsers, operating systems, and programming languages.
 
 TODO
 ----
