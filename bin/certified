@@ -62,6 +62,8 @@ then . "$DB/defaults.sh"
 fi
 [ "$CN" ] || usage 1
 : ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
+: ${ISSUER:="ca"}
+: ${ISSUER_NAME:="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 
 mkdir -p "$DB"
 cd "$DB"
@@ -96,5 +98,5 @@ then
 else
     log "install this certificate chain on your server"
     cat "certs/$NAME.crt"
-    cat "certs/ca.crt"
+    cat "certs/$ISSUER.crt"
 fi
