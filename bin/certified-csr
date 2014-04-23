@@ -57,12 +57,12 @@ do
         O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         +*)
-            _="$(echo "$1" | cut -c"2-")" shift
-            if is_ip "$_"
-            then SAN_IP="$SAN_IP $_"
-            elif is_dns "$_"
-            then SAN_DNS="$SAN_DNS $_"
-            else die "subject alternative name $_ is invalid"
+            SAN="$(echo "$1" | cut -c"2-")" shift
+            if is_ip "$SAN"
+            then SAN_IP="$SAN_IP $SAN"
+            elif is_dns "$SAN"
+            then SAN_DNS="$SAN_DNS $SAN"
+            else die "subject alternative name $SAN is invalid"
             fi;;
 		*) break;;
     esac
