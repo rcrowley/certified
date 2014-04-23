@@ -1,12 +1,12 @@
 #!/bin/sh
 
-#/ Usage: certified-crt [--days=<days>] [--db=<db>] [--name=<name>] [--password=<password>] [--self-signed] CN=<common-name>
-#/   --days=<days>         days until the certificate expires (defaults to 3650)
-#/   --db=<db>             OpenSSL database directory
-#/   --name=<name>         filename to use (default derived from the certificate common name)
-#/   --password=<password> password for the CA private key
-#/   --self-signed         generate a self-signed certificate instead of using the CA
-#/   CN=<common-name>      certificate common name (usually a domain name)
+#/ Usage: certified-crt [--ca-password=<ca-password>] [--days=<days>] [--db=<db>] [--name=<name>] [--self-signed] CN=<common-name>
+#/   --ca-password=<ca-password> password for the CA private key
+#/   --days=<days>               days until the certificate expires (defaults to 3650)
+#/   --db=<db>                   OpenSSL database directory
+#/   --name=<name>               filename to use (default derived from the certificate common name)
+#/   --self-signed               generate a self-signed certificate instead of using the CA
+#/   CN=<common-name>            certificate common name (usually a domain name)
 
 set -e
 
@@ -15,14 +15,14 @@ set -e
 while [ "$#" -gt 0 ]
 do
     case "$1" in
+        --ca-password) CA_PASSWORD="$2" shift 2;;
+        --ca-password=*) CA_PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --days) DAYS="$2" shift 2;;
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        --password|--password) PASSWORD="$2" shift 2;;
-        --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --self|--self-sign|--self-signed) SELF_SIGNED="--self-signed" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
@@ -57,12 +57,12 @@ if [ "$SELF_SIGNED" ]
 then
     log "self-signing the certificate"
     openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -keyfile "private/$NAME.key" -notext -out "certs/$NAME.crt" -selfsign
-elif [ "$PASSWORD" ]
+elif [ "$CA_PASSWORD" ]
 then
     log "signing the certificate with the CA"
-    if [ "$PASSWORD" = "-" ]
+    if [ "$CA_PASSWORD" = "-" ]
     then PASSIN="stdin"
-    else PASSIN="pass:$PASSWORD"
+    else PASSIN="pass:$CA_PASSWORD"
     fi
     openssl ca -batch -config "$NAME.cnf" -extensions "x509_extensions" -in "$NAME.csr" -notext -out "certs/$NAME.crt" -passin "$PASSIN"
 elif grep -q "certificate = certs/ca.crt" "$NAME.cnf"

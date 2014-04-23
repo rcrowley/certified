@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-revoke` [`--db`=_db_] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--password`=_password_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
+`certified-revoke` [`--ca-password`=_ca-password_] [`--db`=_db_] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
 
 ## DESCRIPTION
 
@@ -10,14 +10,14 @@ Revoke a certificate and generate a certificate revocation list.
 
 ## OPTIONS
 
+* `--ca-password`=_ca-password_:
+  Password for the CA private key.
 * `--db`=_db_:
   OpenSSL database directory (defaults to _etc/ssl_).
 * `--issuer`=_issuer_:
   Common name of an alternative CA certificate.
 * `--issuer-name`=_issuer-name_:
   Filename of the alternative CA certificate (default derived from the alternative CA common name).
-* `--password`=_password_:
-  Password for the CA private key.
 * `CN`=_common-name_:
   Certificate common name (usually a domain name).
 

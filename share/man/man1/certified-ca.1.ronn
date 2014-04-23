@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`--revoke`] [`--root-crl-url`=_root-crl-url_] `C`=_country_ [`ST`=_state_] `L`=_locality_ [`O`=_organization_] `CN`=_common-name_
+`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt-intermediate`] [`--intermediate-password`=_intermediate-password_] [`--ocsp-url`=_ocsp-url_] [`--revoke`] [`--root-crl-url`=_root-crl-url_] [`--root-password`=_root-password_] `C`=_country_ `ST`=_state_ `L`=_locality_ `O`=_organization_ `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -20,14 +20,18 @@ _db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certifi
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:
   OpenSSL database directory (defaults to _etc/ssl_).
+* `--encrypt-intermediate`:
+  Encrypt the private key (with _intermediate-password_, if given).
+* `--intermediate-password`=_intermediate-password_:
+  Password for the intermediate CA private key (implies `--encrypt-intermediate`).
 * `--ocsp-url`=_ocsp-url_:
   OCSP responder URL.
-* `--password`=_password_:
-  Password for the CA private key.
 * `--revoke`:
   Revoke an intermediate CA certificate.
 * `--root-crl-url`=_root-crl-url_:
   CRL distribution URL for the root CA.
+* `--root-password`=_root-password_:
+  Password for the root CA private key.
 * `C`=_country_:
   Certificate country.
 * `ST`=_state_:

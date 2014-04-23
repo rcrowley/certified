@@ -1,19 +1,21 @@
 #!/bin/sh
 
-#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--ocsp-url=<ocsp-url>] [--password=<password>] [--revoke] [--root-crl-url=<root-crl-url>] C=<country> [ST=<state>] L=<locality> [O=<organization>] CN=<common-name>
-#/   --bits=<bits>                 bits to use for the private key (defaults to 2048)
-#/   --crl-url=<crl-url>           CRL distribution URL for the intermediate CA
-#/   --days=<days>                 days until the certificate expires (defaults to 3650)
-#/   --db=<db>                     OpenSSL database directory (defaults to etc/ssl)
-#/   --ocsp-url=<ocsp-url>         OCSP responder URL
-#/   --password=<password>         password for the CA private key
-#/   --revoke                      revoke an intermediate CA certificate
-#/   --root-crl-url=<root-crl-url> CRL distribution URL for the root CA
-#/   C=<country>                   certificate country
-#/   ST=<state>                    certificate state (optional)
-#/   L=<locality>                  certificate locality (usually a city)
-#/   O=<organization>              certificate organization (usually a company)
-#/   CN=<common-name>              certificate common name (usually a domain name or Company CA)
+#/ Usage: certified-ca [--bits=<bits>] [--crl-url=<crl-url>] [--days=<days>] [--db=<db>] [--encrypt-intermediate] [--intermediate-password=<intermediate-password>] [--ocsp-url=<ocsp-url>] [--revoke] [--root-crl-url=<root-crl-url>] [--root-password=<root-password>] C=<country> ST=<state> L=<locality> O=<organization> CN=<common-name>
+#/   --bits=<bits>                                   bits to use for the private key (defaults to 2048)
+#/   --crl-url=<crl-url>                             CRL distribution URL for the intermediate CA
+#/   --days=<days>                                   days until the certificate expires (defaults to 3650)
+#/   --db=<db>                                       OpenSSL database directory (defaults to etc/ssl)
+#/   --encrypt-intermediate                          encrypt the intermediate CA private key (with <intermediate-password>, if given)
+#/   --intermediate-password=<intermediate-password> password for the intermediate CA private key (implies --encrypt-intermediate)
+#/   --ocsp-url=<ocsp-url>                           OCSP responder URL
+#/   --root-password=<root-password>                 password for the root CA private key
+#/   --revoke                                        revoke an intermediate CA certificate
+#/   --root-crl-url=<root-crl-url>                   CRL distribution URL for the root CA
+#/   C=<country>                                     certificate country
+#/   ST=<state>                                      certificate state (optional)
+#/   L=<locality>                                    certificate locality (usually a city)
+#/   O=<organization>                                certificate organization (usually a company)
+#/   CN=<common-name>                                certificate common name (usually a domain name or Company CA)
 
 set -e
 
@@ -30,13 +32,16 @@ do
         --days=*) DAYS="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --encrypt-intermediate) ENCRYPT="--encrypt" shift;;
+        --intermediate-password) INTERMEDIATE_PASSWORD="$2" shift 2;;
+        --intermediate-password=*) INTERMEDIATE_PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --ocsp-url) OCSP_URL="$2" shift 2;;
         --ocsp-url=*) OCSP_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        --password) PASSWORD="$2" shift 2;;
-        --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --revoke) REVOKE="--revoke" shift;;
         --root-crl-url) ROOT_CRL_URL="$2" shift 2;;
         --root-crl-url=*) ROOT_CRL_URL="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --root-password) ROOT_PASSWORD="$2" shift 2;;
+        --root-password=*) ROOT_PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
         C=*) C="$(echo "$1" | cut -d"=" -f"2-")" shift;;
@@ -50,14 +55,14 @@ done
 if [ -f "$DB/defaults.sh" ]
 then . "$DB/defaults.sh"
 fi
-[ "$C" -a "$L" -a "$CN" -o "$REVOKE" ] || usage 1
+[ "$C" -a "$L" -a "$O" -a "$CN" -o "$REVOKE" ] || usage 1
 
 mkdir -p "$DB/certs" "$DB/private"
 cd "$DB"
 
 if [ "$REVOKE" ]
 then
-    certified-revoke --db="." --issuer="root-ca" --issuer-name="root-ca" --name="ca" --password="$PASSWORD" CN="ca"
+    certified-revoke --ca-password="$ROOT_PASSWORD" --db="." --issuer="root-ca" --issuer-name="root-ca" --name="ca" CN="ca"
     git rm -q "certs/ca.crt" "ca.csr" "private/ca.key"
     git add "."
     git commit -m"$MESSAGE" -q
@@ -133,26 +138,26 @@ EOF
 
 if [ ! -f "certs/root-ca.crt" ]
 then
-    if [ "$PASSWORD" ]
+    if [ "$ROOT_PASSWORD" ]
     then
-        if [ "$PASSWORD" = "-" ]
-        then read PASSWORD
+        if [ "$ROOT_PASSWORD" = "-" ]
+        then read ROOT_PASSWORD
         fi
-        PASSIN="pass:$PASSWORD" PASSOUT="pass:$PASSWORD"
+        PASSIN="pass:$ROOT_PASSWORD" PASSOUT="pass:$ROOT_PASSWORD"
         log "generating RSA private key"
         openssl genrsa -des3 -out "private/root-ca.key" -passout "$PASSOUT" "$BITS"
         log "signing the CA certificate"
         openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -passin "$PASSIN" -x509
     else
-        log "generating RSA private key; please choose and confirm a password"
+        log "generating RSA private key; please choose and confirm a root CA password"
         openssl genrsa -des3 -out "private/root-ca.key" "$BITS"
-        log "signing the CA certificate; please enter the CA password"
+        log "signing the CA certificate; please enter the root CA password"
         openssl req -config "ca.cnf" -days "$DAYS" -extensions "x509_extensions" -key "private/root-ca.key" -new -out "certs/root-ca.crt" -x509
     fi
 fi
 
-certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="." --issuer="$CN" --issuer-name="root-ca" --name="ca" --ocsp-url="$OCSP_URL" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
-certified-crt --days="$DAYS" --db="." --name="ca" --password="$PASSWORD" CN="$CN"
+certified-csr --bits="$BITS" --ca --crl-url="$ROOT_CRL_URL" --days="$DAYS" --db="." $ENCRYPT --issuer="$CN" --issuer-name="root-ca" --name="ca" --ocsp-url="$OCSP_URL" --password="$INTERMEDIATE_PASSWORD" C="$C" CN="$CN" L="$L" O="$O" ST="$ST"
+certified-crt --ca-password="$ROOT_PASSWORD" --days="$DAYS" --db="." --name="ca" CN="$CN"
 
 git init -q
 echo "private/root-ca.key" >".gitignore"

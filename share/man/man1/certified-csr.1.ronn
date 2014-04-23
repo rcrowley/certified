@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-csr` [`--bits`=_bits_] [`--ca`] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`--ocsp-url`=_ocsp-url_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
+`certified-csr` [`--bits`=_bits_] [`--ca`] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt`] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
 
 ## DESCRIPTION
 
@@ -22,12 +22,18 @@ Additional DNS names, including wildcards, and IP addresses can be added to the 
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:
   OpenSSL database directory (defaults to _etc/ssl_).
+* `--encrypt`:
+  Encrypt the private key (with _password_, if given).
 * `--issuer`=_issuer_:
   Common name of an alternative CA certificate.
 * `--issuer-name`=_issuer-name_:
   Filename of the alternative CA certificate (default derived from the alternative CA common name).
 * `--name`=_name_:
   Filename to use (default derived from the certificate common name).
+* `--ocsp-url`=_ocsp-url_:
+  OCSP responder URL.
+* `--password`=_password_:
+  Password for the private key (implies `--encrypt`).
 * `C`=_country_:
   Certificate country (defaults to the CA country).
 * `ST`=_state_:

@@ -1,6 +1,7 @@
 set -e -x
 
 export PATH="$(cd "$(dirname "$0")" && pwd)/bin:$PATH"
+. "$(dirname "$(dirname "$0")")/lib/certified.sh"
 
 TMP="$(mktemp -d "$PWD/certified-XXXXXX")"
 cd "$TMP"
@@ -13,6 +14,12 @@ serial() {
         awk '/Serial Number:/ {print $3}'
     )"
 }
+
+# Test that we can encrypt the intermediate CA and other private keys.
+certified-ca --db="etc/encrypted-ssl" --encrypt-intermediate --intermediate-password="intermediate-password" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
+grep -q "ENCRYPTED" "etc/encrypted-ssl/private/ca.key"
+certified --ca-password="intermediate-password" --db="etc/encrypted-ssl" --encrypt --password="password" CN="Certificate"
+grep -q "ENCRYPTED" "etc/encrypted-ssl/private/certificate.key"
 
 # Test that you don't need a CA to generate a CSR.
 certified-csr C="US" ST="CA" L="San Francisco" O="Certified" CN="No CA"
@@ -28,7 +35,7 @@ openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
 grep -q "Subject: CN=No CA, C=US, L=San Francisco, O=Certified, ST=CA"
 
 # Test that we can generate a CA even after self-signing a certificate.
-certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.example.com" --password="password" --root-crl-url="http://example.com/root-ca.crl" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
+certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.example.com" --root-crl-url="http://example.com/root-ca.crl" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
@@ -98,6 +105,10 @@ certified CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
 
+# Test that we can generate certificates with encrypted private keys.
+certified --encrypt --password="password" CN="Encrypted"
+grep -q "ENCRYPTED" "etc/ssl/private/encrypted.key"
+
 # Test that we can generate 4096-bit certificates.
 certified --bits="4096" CN="4096"
 openssl x509 -in "etc/ssl/certs/4096.crt" -noout -text |
@@ -162,11 +173,11 @@ grep -q "Serial Number: $SERIAL"
 # Test that we can revoke the intermediate CA and can't sign any certificates
 # until it's regenerated.
 SERIAL="$(serial "etc/ssl/certs/ca.crt")"
-certified-ca --password="password" --revoke
+certified-ca --root-password="root-password" --revoke
 openssl crl -in "etc/ssl/crl/root-ca.crl" -noout -text |
 grep -q "Serial Number: $SERIAL"
 certified CN="Intermediate Revoked" && false
-certified-ca --password="password" CN="Certified CA"
+certified-ca --root-password="root-password" CN="Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
 grep -A"3" "X509v3 CRL Distribution Points" |
 grep -q "http://example.com/root-ca.crl"
@@ -182,4 +193,4 @@ grep -q "OK"
 
 set +x
 echo >&2
-echo "PASS" >&2
+echo "$(tput "bold")PASS$(tput "sgr0")" >&2

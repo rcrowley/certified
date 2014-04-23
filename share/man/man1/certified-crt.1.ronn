@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-crt` [`--days`=_days_] [`--db`=_db_] [`--name`=_name_] [`--password`=_password_] [`--self-signed`] `CN`=_common-name_
+`certified-crt` [`--ca-password`=_ca-password_] [`--days`=_days_] [`--db`=_db_] [`--name`=_name_] [`--self-signed`] `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -10,14 +10,14 @@ Sign a certificate with the CA in _db_ unless `--self-signed` is given, in which
 
 ## OPTIONS
 
+* `--ca-password`=_ca-password_:
+  Password for the CA private key.
 * `--days`=_days_:
   Days until the certificate expires (defaults to _3650_).
 * `--db`=_db_:
   OpenSSL database directory (defaults to _etc/ssl_).
 * `--name`=_name_:
   Filename to use (default derived from the certificate common name).
-* `--password`=_password_:
-  Password for the CA private key.
 * `--self-signed`:
   Generate a self-signed certificate instead of using the CA.
 * `CN`=_common-name_:

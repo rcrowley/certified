@@ -1,11 +1,11 @@
 #!/bin/sh
 
-#/ Usage: certified-revoke [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--name=<name>] [--password=<password>] CN=<common-name>
+#/ Usage: certified-revoke [--ca-password=<ca-password>] [--db=<db>] [--issuer=<issuer>] [--issuer-name=<issuer-name>] [--name=<name>] CN=<common-name>
+#/   --ca-password=<ca-password> password for the CA private key
 #/   --db=<db>                   OpenSSL database directory
 #/   --issuer=<issuer>           common name of an alternative CA certificate
 #/   --issuer-name=<issuer-name> filename of the alternative CA certificate (default derived from the alternative CA common name)
 #/   --name=<name>               filename to use (default derived from the certificate common name)
-#/   --password=<password>       password for the CA private key
 #/   CN=<common-name>            certificate common name (usually a domain name)
 
 set -e
@@ -15,6 +15,8 @@ set -e
 while [ "$#" -gt 0 ]
 do
     case "$1" in
+        --ca-password) CA_PASSWORD="$2" shift 2;;
+        --ca-password=*) CA_PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --db) DB="$2" shift 2;;
         --db=*) DB="$(echo "$1" | cut -c"6-")" shift;;
         --issuer) ISSUER="$2" shift 2;;
@@ -23,8 +25,6 @@ do
         --issuer-name=*) ISSUER_NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
-        --password) PASSWORD="$2" shift 2;;
-        --password=*) PASSWORD="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
@@ -53,11 +53,11 @@ if [ ! -f "$NAME.cnf" ]
 then die "OpenSSL configuration $NAME.cnf does not exist"
 fi
 
-if [ "$PASSWORD" ]
+if [ "$CA_PASSWORD" ]
 then
-    if [ "$PASSWORD" = "-" ]
+    if [ "$CA_PASSWORD" = "-" ]
     then PASSIN="stdin"
-    else PASSIN="pass:$PASSWORD"
+    else PASSIN="pass:$CA_PASSWORD"
     fi
     log "revoking $NAME.crt"
     openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -keyfile "private/$ISSUER_NAME.key" -passin "$PASSIN" -revoke "certs/$NAME.crt"

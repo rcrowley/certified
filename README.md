@@ -19,7 +19,7 @@ sudo apt-get update
 sudo apt-get -y install certified
 ```
 
-All you need is `/bin/sh` and OpenSSL.
+All you need is `/bin/sh`, GNU `coreutils`, and OpenSSL.
 
 Usage
 -----
