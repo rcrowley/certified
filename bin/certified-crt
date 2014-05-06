@@ -50,8 +50,11 @@ then die "private key $NAME.key already does not exist"
 fi
 
 if [ -z "$SELF_SIGNED" ]
-then sed -i.bak "s/#authorityKeyIdentifier/authorityKeyIdentifier/" "$NAME.cnf"
-rm "$NAME.cnf.bak"
+then
+    trap "rm -f \"$NAME.cnf.bak\"" EXIT INT QUIT TERM
+    sed -i".bak" "s/#authorityKeyIdentifier/authorityKeyIdentifier/" "$NAME.cnf"
+    rm -f "$NAME.cnf.bak"
+    trap "" EXIT INT QUIT TERM
 fi
 
 if [ "$SELF_SIGNED" ]
