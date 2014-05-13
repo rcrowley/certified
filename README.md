@@ -7,8 +7,11 @@ Installation
 ------------
 
 ```sh
+sudo apt-get install ruby-ronn
 sudo make install
 ```
+
+For some version of `apt-get` and some version of `ruby-ronn`. The point being you need to make sure you have [ronn](https://github.com/rtomayko/ronn) installed.
 
 Or from `packages.rcrowley.org` on Debian or Ubuntu:
 
