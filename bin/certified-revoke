@@ -6,6 +6,7 @@
 #/   --issuer=<issuer>           common name of an alternative CA certificate
 #/   --issuer-name=<issuer-name> filename of the alternative CA certificate (default derived from the alternative CA common name)
 #/   --name=<name>               filename to use (default derived from the certificate common name)
+#/   --reason=<revoked because>  The reason the cert is being revoked, default "unspecified"
 #/   CN=<common-name>            certificate common name (usually a domain name)
 
 set -e
@@ -25,6 +26,8 @@ do
         --issuer-name=*) ISSUER_NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         --name) NAME="$2" shift 2;;
         --name=*) NAME="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        --reason) REASON="$2" shift 2;;
+        --reason=*) REASON="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		-h|--help) usage 0;;
 		-*) usage 1;;
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
@@ -38,6 +41,7 @@ fi
 : ${NAME:="$(echo "$CN" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
 : ${ISSUER:="ca"}
 : ${ISSUER_NAME:="$(echo "$ISSUER" | tr "[:upper:]" "[:lower:]" | tr " " "-")"}
+: ${REASON:="unspecified"}
 
 mkdir -p "$DB/crl"
 cd "$DB"
@@ -62,12 +66,12 @@ then
     log "revoking $NAME.crt"
     openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -keyfile "private/$ISSUER_NAME.key" -passin "$PASSIN" -revoke "certs/$NAME.crt"
     log "generating $ISSUER_NAME.crl"
-    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl" -passin "$PASSIN"
+    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "$REASON" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl" -passin "$PASSIN"
 else
     log "revoking $NAME.crt"
     openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -keyfile "private/$ISSUER_NAME.key" -revoke "certs/$NAME.crt"
     log "generating $ISSUER_NAME.crl"
-    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "unspecified" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl"
+    openssl ca -cert "certs/$ISSUER_NAME.crt" -config "$NAME.cnf" -crl_reason "$REASON" -crldays 7 -gencrl -keyfile "private/$ISSUER_NAME.key" -out "crl/$ISSUER_NAME.crl"
 fi
 
 echo >&2

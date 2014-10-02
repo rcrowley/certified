@@ -76,7 +76,7 @@ cd "$DB"
 if [ "$REVOKE" ]
 then
     certified-revoke --ca-password="$CA_PASSWORD" --db="." --issuer="$ISSUER" --issuer-name="$ISSUER_NAME" --name="$NAME" CN="$CN"
-    git rm -q "certs/$NAME.crt" "$NAME.cnf" "$NAME.csr" "private/$NAME.key"
+    git rm -f -q "certs/$NAME.crt" "$NAME.cnf" "$NAME.csr" "private/$NAME.key"
     git add "."
     git commit -m"$MESSAGE" -q
     exit
