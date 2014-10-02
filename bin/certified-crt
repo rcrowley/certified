@@ -46,7 +46,7 @@ if [ ! -f "$NAME.csr" ]
 then die "certificate signing request $NAME.csr does not exist"
 fi
 if [ ! -f "private/$NAME.key" ]
-then die "private key $NAME.key already does not exist"
+then die "private key $NAME.key does not exist"
 fi
 
 if [ -z "$SELF_SIGNED" ]
