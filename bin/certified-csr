@@ -107,7 +107,7 @@ certificate = certs/$ISSUER_NAME.crt
 copy_extensions = copy
 database = $ISSUER_NAME.db
 default_days = $DAYS
-default_md = sha1
+default_md = sha256
 dir = .
 new_certs_dir = .$ISSUER_NAME
 policy = policy_match
@@ -135,7 +135,7 @@ stateOrProvinceName = match
 
 [req]
 default_bits = $BITS
-default_md = sha1
+default_md = sha256
 distinguished_name = dn
 prompt = no
 EOF

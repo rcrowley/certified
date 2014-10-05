@@ -123,7 +123,7 @@ CN = $CN
 
 [req]
 default_bits = $BITS
-default_md = sha1
+default_md = sha256
 distinguished_name = dn
 prompt = no
 
