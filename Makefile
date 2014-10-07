@@ -1,5 +1,5 @@
-VERSION=0.0.0
-BUILD=0
+VERSION=1.0.0
+BUILD=1
 
 prefix=/usr/local
 bindir=${prefix}/bin
@@ -30,7 +30,17 @@ uninstall:
 %.deb: bin/* lib/* share/man/man*/*.[12345678]
 	rm -f $@
 	make install DESTDIR=install prefix=/usr
-	fakeroot fpm -Cinstall -m'Richard Crowley <r@rcrowley.org>' -ncertified -v$(VERSION)-$(BUILD) -p$@ -sdir -tdeb usr
+	fakeroot fpm -a 'all' \
+		--description 'Generate and manage an internal CA for your company' \
+		--url 'https://github.com/rcrowley/certified' \
+		-m 'Richard Crowley <r@rcrowley.org>' \
+		--vendor '' \
+		-n certified \
+		--category 'misc' \
+		--license 'BSD-2-clause' \
+		-v $(VERSION)-$(BUILD) \
+		-d 'openssl' \
+		-C install -p $@ -s dir -t deb usr
 	rm -rf install
 
 share/man/man1/%.1: share/man/man1/%.1.ronn
