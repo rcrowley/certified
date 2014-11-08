@@ -43,6 +43,23 @@ uninstall:
 		-C install -p $@ -s dir -t deb usr
 	rm -rf install
 
+%.rpm: bin/* lib/* share/man/man*/*.[12345678]
+	rm -f $@
+	make install DESTDIR=install prefix=/usr
+	fakeroot fpm -a 'all' \
+		--description 'Generate and manage an internal CA for your company' \
+		--url 'https://github.com/rcrowley/certified' \
+		-m 'Richard Crowley <r@rcrowley.org>' \
+		--vendor '' \
+		-n certified \
+		--category 'misc' \
+		--license 'BSD-2-clause' \
+		-v $(VERSION) \
+		--iteration $(BUILD) \
+		-d 'openssl' \
+		-C install -p $@ -s dir -t rpm usr
+	rm -rf install
+
 share/man/man1/%.1: share/man/man1/%.1.ronn
 	ronn --manual=Certified --roff $<
 
