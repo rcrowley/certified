@@ -52,7 +52,9 @@ fi
 if [ -z "$SELF_SIGNED" ]
 then
     trap "rm -f \"$NAME.cnf.bak\"" EXIT INT QUIT TERM
-    sed -i".bak" "s/#authorityKeyIdentifier/authorityKeyIdentifier/" "$NAME.cnf"
+    cp "$NAME.cnf" "$NAME.cnf.bak"
+    sed "s/#authorityKeyIdentifier/authorityKeyIdentifier/" "$NAME.cnf" > "$NAME.cnf.new"
+    mv "$NAME.cnf.new" "$NAME.cnf"
     rm -f "$NAME.cnf.bak"
     trap "" EXIT INT QUIT TERM
 fi
