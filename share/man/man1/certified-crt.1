@@ -7,12 +7,16 @@
 \fBcertified\-crt\fR \- sign certificates
 .
 .SH "SYNOPSIS"
-\fBcertified\-crt\fR [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-self\-signed\fR] \fBCN\fR=\fIcommon\-name\fR
+\fBcertified\-crt\fR [\fB\-\-ca\-password\fR=\fIca\-password\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-self\-signed\fR] \fBCN\fR=\fIcommon\-name\fR
 .
 .SH "DESCRIPTION"
 Sign a certificate with the CA in \fIdb\fR unless \fB\-\-self\-signed\fR is given, in which case the certificate is signed with itself\.
 .
 .SH "OPTIONS"
+.
+.TP
+\fB\-\-ca\-password\fR=\fIca\-password\fR
+Password for the CA private key\.
 .
 .TP
 \fB\-\-days\fR=\fIdays\fR
@@ -25,10 +29,6 @@ OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
 .TP
 \fB\-\-name\fR=\fIname\fR
 Filename to use (default derived from the certificate common name)\.
-.
-.TP
-\fB\-\-password\fR=\fIpassword\fR
-Password for the CA private key\.
 .
 .TP
 \fB\-\-self\-signed\fR

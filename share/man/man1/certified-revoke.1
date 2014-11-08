@@ -7,12 +7,16 @@
 \fBcertified\-revoke\fR \- revoke certificates
 .
 .SH "SYNOPSIS"
-\fBcertified\-revoke\fR [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-password\fR=\fIpassword\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\-revoke\fR [\fB\-\-ca\-password\fR=\fIca\-password\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Revoke a certificate and generate a certificate revocation list\.
 .
 .SH "OPTIONS"
+.
+.TP
+\fB\-\-ca\-password\fR=\fIca\-password\fR
+Password for the CA private key\.
 .
 .TP
 \fB\-\-db\fR=\fIdb\fR
@@ -25,10 +29,6 @@ Common name of an alternative CA certificate\.
 .TP
 \fB\-\-issuer\-name\fR=\fIissuer\-name\fR
 Filename of the alternative CA certificate (default derived from the alternative CA common name)\.
-.
-.TP
-\fB\-\-password\fR=\fIpassword\fR
-Password for the CA private key\.
 .
 .TP
 \fBCN\fR=\fIcommon\-name\fR

@@ -7,7 +7,7 @@
 \fBcertified\fR \- generate and sign certificates
 .
 .SH "SYNOPSIS"
-\fBcertified\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-no\-sign\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-self\-signed\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-ca\-password\fR=\fIca\-password\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-no\-sign\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-self\-signed\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Generate and sign a certificate with the CA in \fIdb\fR unless \fB\-\-revoke\fR is given, in which case the certificate is revoked instead\.
@@ -26,12 +26,20 @@ Bits to use for the private key (defaults to \fI2048\fR)\.
 Generate a CA certificate\.
 .
 .TP
+\fB\-\-ca\-password\fR=\fIca\-password\fR
+Password for the CA private key\.
+.
+.TP
 \fB\-\-days\fR=\fIdays\fR
 Days until the certificate expires (defaults to \fI3650\fR)\.
 .
 .TP
 \fB\-\-db\fR=\fIdb\fR
 OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
+.
+.TP
+\fB\-\-encrypt\fR
+Encrypt the private key (with \fIencrypt\-password\fR, if given)\.
 .
 .TP
 \fB\-\-issuer\fR=\fIissuer\fR
@@ -51,7 +59,7 @@ Do not sign the certificate; stop with a certificate signing request\. Relay thi
 .
 .TP
 \fB\-\-password\fR=\fIpassword\fR
-Password for the CA private key\.
+Password for the private key (implies \fB\-\-encrypt\fR)\.
 .
 .TP
 \fB\-\-revoke\fR

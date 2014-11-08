@@ -7,7 +7,7 @@
 \fBcertified\-ca\fR \- generate a CA
 .
 .SH "SYNOPSIS"
-\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] \fBC\fR=\fIcountry\fR [\fBST\fR=\fIstate\fR] \fBL\fR=\fIlocality\fR [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR
+\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\-intermediate\fR] [\fB\-\-intermediate\-password\fR=\fIintermediate\-password\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-revoke\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] [\fB\-\-root\-password\fR=\fIroot\-password\fR] \fBC\fR=\fIcountry\fR \fBST\fR=\fIstate\fR \fBL\fR=\fIlocality\fR \fBO\fR=\fIorganization\fR \fBCN\fR=\fIcommon\-name\fR
 .
 .SH "DESCRIPTION"
 Generate two private keys\. The first is self\-signed to generate the root CA certificate\. It is then used to sign the second to generate the intermediate CA certificate\. The root CA certificate should be installed on laptops and servers\. The intermediate CA signs subsequent certificates and may itself be revoked in the event its private key is compromised\.
@@ -34,12 +34,16 @@ Days until the certificate expires (defaults to \fI3650\fR)\.
 OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
 .
 .TP
-\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR
-OCSP responder URL\.
+\fB\-\-encrypt\-intermediate\fR
+Encrypt the private key (with \fIintermediate\-password\fR, if given)\.
 .
 .TP
-\fB\-\-password\fR=\fIpassword\fR
-Password for the CA private key\.
+\fB\-\-intermediate\-password\fR=\fIintermediate\-password\fR
+Password for the intermediate CA private key (implies \fB\-\-encrypt\-intermediate\fR)\.
+.
+.TP
+\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR
+OCSP responder URL\.
 .
 .TP
 \fB\-\-revoke\fR
@@ -48,6 +52,10 @@ Revoke an intermediate CA certificate\.
 .TP
 \fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR
 CRL distribution URL for the root CA\.
+.
+.TP
+\fB\-\-root\-password\fR=\fIroot\-password\fR
+Password for the root CA private key\.
 .
 .TP
 \fBC\fR=\fIcountry\fR

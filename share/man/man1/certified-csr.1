@@ -7,7 +7,7 @@
 \fBcertified\-csr\fR \- generate certificate signing requests
 .
 .SH "SYNOPSIS"
-\fBcertified\-csr\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\-csr\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Generate a certificate signing request\.
@@ -38,6 +38,10 @@ Days until the certificate expires (defaults to \fI3650\fR)\.
 OpenSSL database directory (defaults to \fIetc/ssl\fR)\.
 .
 .TP
+\fB\-\-encrypt\fR
+Encrypt the private key (with \fIpassword\fR, if given)\.
+.
+.TP
 \fB\-\-issuer\fR=\fIissuer\fR
 Common name of an alternative CA certificate\.
 .
@@ -48,6 +52,14 @@ Filename of the alternative CA certificate (default derived from the alternative
 .TP
 \fB\-\-name\fR=\fIname\fR
 Filename to use (default derived from the certificate common name)\.
+.
+.TP
+\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR
+OCSP responder URL\.
+.
+.TP
+\fB\-\-password\fR=\fIpassword\fR
+Password for the private key (implies \fB\-\-encrypt\fR)\.
 .
 .TP
 \fBC\fR=\fIcountry\fR
