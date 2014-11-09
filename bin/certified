@@ -18,6 +18,7 @@
 #/   ST=<state>                  certificate state (defaults to the CA state)
 #/   L=<locality>                certificate locality (usually a city; defaults to the CA locality)
 #/   O=<organization>            certificate organization (usually a company; defaults to the CA organization)
+#/   OU=<org-unit>               certificate organizational unit (usually a department or group; defaults to the CA organizational unit)
 #/   CN=<common-name>            certificate common name (usually a domain name)
 #/   +<dns>                      add a DNS name to the certificate's subject alternative names
 #/   +<ip>                       add an IP address to the certificate's subject alternative names
@@ -57,6 +58,7 @@ do
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        OU=*) OU="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         +*) SAN="$SAN $1" shift;;
 		*) break;;
@@ -82,7 +84,7 @@ then
     exit
 fi
 
-certified-csr --bits="$BITS" $CA --days="$DAYS" --db="." $ENCRYPT --issuer="$ISSUER" --issuer-name="$ISSUER_NAME" --name="$NAME" --password="$PASSWORD" C="$C" CN="$CN" L="$L" O="$O" ST="$ST" $SAN
+certified-csr --bits="$BITS" $CA --days="$DAYS" --db="." $ENCRYPT --issuer="$ISSUER" --issuer-name="$ISSUER_NAME" --name="$NAME" --password="$PASSWORD" C="$C" CN="$CN" L="$L" O="$O" OU="$OU" ST="$ST" $SAN
 
 if [ -z "$NO_SIGN" ]
 then certified-crt --days="$DAYS" --db="." --name="$NAME" --ca-password="$CA_PASSWORD" $SELF_SIGNED CN="$CN"

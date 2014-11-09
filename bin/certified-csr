@@ -16,6 +16,7 @@
 #/   ST=<state>                  certificate state (defaults to the CA state)
 #/   L=<locality>                certificate locality (usually a city; defaults to the CA locality)
 #/   O=<organization>            certificate organization (usually a company; defaults to the CA organization)
+#/   OU=<org-unit>               certificate organizational unit (usually a department or group; defaults to the CA organization unit)
 #/   CN=<common-name>            certificate common name (usually a domain name)
 #/   +<dns>                      add a DNS name to the certificate's subject alternative names
 #/   +<ip>                       add an IP address to the certificate's subject alternative names
@@ -55,6 +56,7 @@ do
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        OU=*) OU="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         +*)
             SAN="$(echo "$1" | cut -c"2-")" shift
@@ -121,6 +123,7 @@ EOF
     if_echo "$ST" "ST = $ST"
     if_echo "$L" "L = $L"
     if_echo "$O" "O = $O"
+    if_echo "$OU" "OU = $OU"
     cat <<EOF
 CN = $CN
 

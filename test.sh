@@ -16,30 +16,30 @@ serial() {
 }
 
 # Test that we can encrypt the intermediate CA and other private keys.
-certified-ca --db="etc/encrypted-ssl" --encrypt-intermediate --intermediate-password="intermediate-password" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
+certified-ca --db="etc/encrypted-ssl" --encrypt-intermediate --intermediate-password="intermediate-password" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" OU="OrgUnit" CN="Certified CA"
 grep -q "ENCRYPTED" "etc/encrypted-ssl/private/ca.key"
 certified --ca-password="intermediate-password" --db="etc/encrypted-ssl" --encrypt --password="password" CN="Certificate"
 grep -q "ENCRYPTED" "etc/encrypted-ssl/private/certificate.key"
 
 # Test that you don't need a CA to generate a CSR.
-certified-csr C="US" ST="CA" L="San Francisco" O="Certified" CN="No CA"
+certified-csr C="US" ST="CA" L="San Francisco" O="Certified" OU="OrgUnit" CN="No CA"
 openssl req -in "etc/ssl/no-ca.csr" -noout -text |
-grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, CN=No CA"
+grep -q "Subject: C=US, ST=CA, L=San Francisco, O=Certified, OU=OrgUnit, CN=No CA"
 test ! -f "etc/ssl/certs/no-ca.crt"
 
 # Test that you don't need a CA to self-sign a certificate.
 certified-crt --self-signed CN="No CA"
 openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
-grep -q "Issuer: CN=No CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Issuer: CN=No CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/no-ca.crt" -noout -text |
-grep -q "Subject: CN=No CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Subject: CN=No CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 
 # Test that we can generate a CA even after self-signing a certificate.
-certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.example.com" --root-crl-url="http://example.com/root-ca.crl" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" CN="Certified CA"
+certified-ca --crl-url="http://example.com/ca.crl" --ocsp-url="http://ocsp.example.com" --root-crl-url="http://example.com/root-ca.crl" --root-password="root-password" C="US" ST="CA" L="San Francisco" O="Certified" OU="OrgUnit" CN="Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
-grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, CN=Certified CA"
+grep -q "Issuer: C=US, ST=CA, L=San Francisco, O=Certified, OU=OrgUnit, CN=Certified CA"
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
-grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 if ! date -d"now" 2>"/dev/null"
 then
     openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
@@ -57,7 +57,7 @@ grep -q "OCSP - URI:http://ocsp.example.com"
 certified-ca C="US" ST="CA" L="San Francisco" O="Certified" CN="New CA" &&
 false
 openssl x509 -in "etc/ssl/certs/ca.crt" -noout -text |
-grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Subject: CN=Certified CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 
 # Test that we can still self-sign a certificate.
 certified --self-signed CN="Self-Signed Certificate"
@@ -78,9 +78,9 @@ certified CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
 grep -q "Version: 3"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
-grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
-grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Subject: CN=Certificate, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 if ! date -d"now" 2>"/dev/null"
 then
     openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
@@ -109,7 +109,7 @@ openssl crl -in "etc/ssl/crl/ca.crl" -noout -text |
 grep -q "Serial Number: $SERIAL"
 certified CN="Certificate"
 openssl x509 -in "etc/ssl/certs/certificate.crt" -noout -text |
-grep -q "Subject: CN=Certificate, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Subject: CN=Certificate, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 
 # Test that we can generate certificates with encrypted private keys.
 certified --encrypt --password="password" CN="Encrypted"
@@ -156,7 +156,7 @@ certified CN="Double Wildcard" +"*.*.example.com" && false
 # Test that we can delegate signing to an alternative CA.
 certified --ca CN="Sub CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
-grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Issuer: CN=Certified CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/sub-ca.crt" -noout -text |
 grep -q "Subject: CN=Sub CA"
 cat "etc/ssl/certs/ca.crt" "etc/ssl/certs/root-ca.crt" >"etc/ssl/certs/ca.chain.crt"
@@ -164,7 +164,7 @@ openssl verify -CAfile "etc/ssl/certs/ca.chain.crt" "etc/ssl/certs/sub-ca.crt" |
 grep -q "OK"
 certified --issuer="Sub CA" CN="Sub Certificate"
 openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
-grep -q "Issuer: CN=Sub CA, C=US, L=San Francisco, O=Certified, ST=CA"
+grep -q "Issuer: CN=Sub CA, C=US, L=San Francisco, OU=OrgUnit, O=Certified, ST=CA"
 openssl x509 -in "etc/ssl/certs/sub-certificate.crt" -noout -text |
 grep -q "Subject: CN=Sub Certificate"
 openssl verify -CAfile "etc/ssl/certs/ca.crt" "etc/ssl/certs/sub-certificate.crt" |
