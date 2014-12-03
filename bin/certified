@@ -4,7 +4,7 @@
 #/   --bits=<bits>               bits to use for the private key (defaults to 2048)
 #/   --ca                        generate a CA certificate
 #/   --ca-password=<ca-password> password for the CA private key
-#/   --days=<days>               days until the certificate expires (defaults to 3650)
+#/   --days=<days>               days until the certificate expires (defaults to 365)
 #/   --db=<db>                   OpenSSL database directory
 #/   --encrypt                   encrypt the private key (with <password>, if given)
 #/   --issuer=<issuer>           common name of an alternative CA certificate
