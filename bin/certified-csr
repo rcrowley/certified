@@ -190,16 +190,16 @@ then
         log "generating RSA private key"
         openssl genrsa -des3 -out "private/$NAME.key" -passout "$PASSOUT" "$BITS"
         log "generating certificate signing request"
-        openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -out "$NAME.csr" -passin "$PASSIN"
+        openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -out "$NAME.csr" -passin "$PASSIN" -reqexts "x509_extensions"
     else
         log "generating RSA private key; please choose and confirm a password"
         openssl genrsa -des3 -out "private/$NAME.key" "$BITS"
         log "generating certificate signing request; please enter the password"
-        openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -out "$NAME.csr"
+        openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -out "$NAME.csr" -reqexts "x509_extensions"
     fi
 else
     log "generating RSA private key"
     openssl genrsa -out "private/$NAME.key" "$BITS"
     log "generating certificate signing request"
-    openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -nodes -out "$NAME.csr"
+    openssl req -config "$NAME.cnf" -key "private/$NAME.key" -new -nodes -out "$NAME.csr" -reqexts "x509_extensions"
 fi
