@@ -15,6 +15,7 @@
 #/   ST=<state>                                      certificate state (optional)
 #/   L=<locality>                                    certificate locality (usually a city)
 #/   O=<organization>                                certificate organization (usually a company)
+#/   OU=<org-unit>                                   certificate organizational unit (usually a department or group)
 #/   CN=<common-name>                                certificate common name (usually a domain name or Company CA)
 
 set -e
@@ -48,6 +49,7 @@ do
         CN=*) CN="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         L=*) L="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         O=*) O="$(echo "$1" | cut -d"=" -f"2-")" shift;;
+        OU=*) OU="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
 		*) usage 1;;
     esac
@@ -97,6 +99,7 @@ EOF
     if_echo "$ST" ": \${ST:=\"$ST\"}"
     if_echo "$L" ": \${L:=\"$L\"}"
     if_echo "$O" ": \${O:=\"$O\"}"
+    if_echo "$OU" ": \${OU:=\"$OU\"}"
 } >"defaults.sh"
 
 if [ "$BITS" -lt 4096 ]
@@ -118,6 +121,7 @@ EOF
     if_echo "$ST" "ST = $ST"
     if_echo "$L" "L = $L"
     if_echo "$O" "O = $O"
+    if_echo "$OU" "OU = $OU"
     cat <<EOF
 CN = $CN
 
