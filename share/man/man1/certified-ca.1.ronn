@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt-intermediate`] [`--intermediate-password`=_intermediate-password_] [`--ocsp-url`=_ocsp-url_] [`--revoke`] [`--root-crl-url`=_root-crl-url_] [`--root-password`=_root-password_] `C`=_country_ `ST`=_state_ `L`=_locality_ `O`=_organization_ `CN`=_common-name_
+`certified-ca` [`--bits`=_bits_] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt-intermediate`] [`--intermediate-password`=_intermediate-password_] [`--ocsp-url`=_ocsp-url_] [`--revoke`] [`--root-crl-url`=_root-crl-url_] [`--root-password`=_root-password_] [`OU`=_org-unit_] `C`=_country_ `ST`=_state_ `L`=_locality_ `O`=_organization_ `CN`=_common-name_
 
 ## DESCRIPTION
 
@@ -40,6 +40,8 @@ _db_ is an OpenSSL database that `certified`(1) uses to issue and revoke certifi
   Certificate Locality (usually a city).
 * `O`=_organization_:
   Certificate organization (usually a company).
+* `OU`=_org-unit_:
+  Certificate organizational unit (usually a department or group).
 * `CN`=_common-name_:
   Certificate common name (usually a domain name or _Company CA_).
 * `+`_dns_, `+`_ip_:

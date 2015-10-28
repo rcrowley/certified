@@ -81,7 +81,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>certified-csr</code> [<code>--bits</code>=<em>bits</em>] [<code>--ca</code>] [<code>--crl-url</code>=<em>crl-url</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--issuer</code>=<em>issuer</em>] [<code>--issuer-name</code>=<em>issuer-name</em>] [<code>--name</code>=<em>name</em>] [<code>--ocsp-url</code>=<em>ocsp-url</em>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
+<p><code>certified-csr</code> [<code>--bits</code>=<em>bits</em>] [<code>--ca</code>] [<code>--crl-url</code>=<em>crl-url</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--encrypt</code>] [<code>--issuer</code>=<em>issuer</em>] [<code>--issuer-name</code>=<em>issuer-name</em>] [<code>--name</code>=<em>name</em>] [<code>--ocsp-url</code>=<em>ocsp-url</em>] [<code>--password</code>=<em>password</em>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] [<code>OU</code>=<em>org-unit</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -97,13 +97,17 @@
 <dt><code>--crl-url</code>=<em>crl-url</em></dt><dd>CRL distribution URL for the intermediate CA.</dd>
 <dt><code>--days</code>=<em>days</em></dt><dd>Days until the certificate expires (defaults to <em>3650</em>).</dd>
 <dt class="flush"><code>--db</code>=<em>db</em></dt><dd>OpenSSL database directory (defaults to <em>etc/ssl</em>).</dd>
+<dt><code>--encrypt</code></dt><dd>Encrypt the private key (with <em>password</em>, if given).</dd>
 <dt><code>--issuer</code>=<em>issuer</em></dt><dd>Common name of an alternative CA certificate.</dd>
 <dt><code>--issuer-name</code>=<em>issuer-name</em></dt><dd>Filename of the alternative CA certificate (default derived from the alternative CA common name).</dd>
 <dt><code>--name</code>=<em>name</em></dt><dd>Filename to use (default derived from the certificate common name).</dd>
+<dt><code>--ocsp-url</code>=<em>ocsp-url</em></dt><dd>OCSP responder URL.</dd>
+<dt><code>--password</code>=<em>password</em></dt><dd>Password for the private key (implies <code>--encrypt</code>).</dd>
 <dt><code>C</code>=<em>country</em></dt><dd>Certificate country (defaults to the CA country).</dd>
 <dt><code>ST</code>=<em>state</em></dt><dd>Certificate state (defaults to the CA state).</dd>
 <dt><code>L</code>=<em>locality</em></dt><dd>Certificate Locality (usually a city; defaults to the CA locality).</dd>
 <dt><code>O</code>=<em>organization</em></dt><dd>Certificate organization (usually a company; defaults to the CA organization).</dd>
+<dt><code>OU</code>=<em>org-unit</em></dt><dd>Certificate organizational unit (usually a department or group; defaults to the CA organizational unit).</dd>
 <dt><code>CN</code>=<em>common-name</em></dt><dd>Certificate common name (usually a domain name).</dd>
 <dt><code>+</code><em>dns</em>, <code>+</code><em>ip</em></dt><dd>Add a DNS name or IP address to the certificate's subject alternative names.</dd>
 </dl>
@@ -115,7 +119,7 @@
 
 <h2 id="AUTHOR">AUTHOR</h2>
 
-<p>Richard Crowley &lt;<a data-bare-link="true" href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#x72;&#x40;&#x72;&#99;&#x72;&#111;&#x77;&#108;&#x65;&#x79;&#x2e;&#111;&#x72;&#x67;">&#x72;&#x40;&#x72;&#99;&#114;&#x6f;&#x77;&#x6c;&#x65;&#x79;&#46;&#111;&#114;&#x67;</a>></p>
+<p>Richard Crowley &lt;<a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#114;&#64;&#114;&#99;&#114;&#x6f;&#x77;&#x6c;&#x65;&#x79;&#x2e;&#111;&#114;&#103;" data-bare-link="true">&#114;&#64;&#x72;&#99;&#x72;&#x6f;&#x77;&#108;&#101;&#x79;&#46;&#111;&#x72;&#103;</a>></p>
 
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
@@ -125,12 +129,12 @@
 
 <p><code>openssl</code>(1), <code>genrsa</code>(1), <code>req</code>(1), <code>x509</code>(1)</p>
 
-<p><a data-bare-link="true" href="https://github.com/rcrowley/certified/wiki">https://github.com/rcrowley/certified/wiki</a></p>
+<p><a href="https://github.com/rcrowley/certified/wiki" data-bare-link="true">https://github.com/rcrowley/certified/wiki</a></p>
 
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>April 2014</li>
+    <li class='tc'>October 2015</li>
     <li class='tr'>certified-csr(1)</li>
   </ol>
 

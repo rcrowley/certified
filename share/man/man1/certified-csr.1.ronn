@@ -2,7 +2,7 @@
 
 ## SYNOPSIS
 
-`certified-csr` [`--bits`=_bits_] [`--ca`] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt`] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
+`certified-csr` [`--bits`=_bits_] [`--ca`] [`--crl-url`=_crl-url_] [`--days`=_days_] [`--db`=_db_] [`--encrypt`] [`--issuer`=_issuer_] [`--issuer-name`=_issuer-name_] [`--name`=_name_] [`--ocsp-url`=_ocsp-url_] [`--password`=_password_] [`C`=_country_] [`ST`=_state_] [`L`=_locality_] [`O`=_organization_] [`OU`=_org-unit_] `CN`=_common-name_ [`+`_dns_[_..._]] [`+`_ip_[_..._]]
 
 ## DESCRIPTION
 
@@ -42,6 +42,8 @@ Additional DNS names, including wildcards, and IP addresses can be added to the 
   Certificate Locality (usually a city; defaults to the CA locality).
 * `O`=_organization_:
   Certificate organization (usually a company; defaults to the CA organization).
+* `OU`=_org-unit_:
+  Certificate organizational unit (usually a department or group; defaults to the CA organizational unit).
 * `CN`=_common-name_:
   Certificate common name (usually a domain name).
 * `+`_dns_, `+`_ip_:

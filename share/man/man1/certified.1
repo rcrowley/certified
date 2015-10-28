@@ -1,13 +1,13 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "CERTIFIED" "1" "April 2014" "" "Certified"
+.TH "CERTIFIED" "1" "October 2015" "" "Certified"
 .
 .SH "NAME"
 \fBcertified\fR \- generate and sign certificates
 .
 .SH "SYNOPSIS"
-\fBcertified\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-ca\-password\fR=\fIca\-password\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-no\-sign\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-self\-signed\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
+\fBcertified\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-ca\fR] [\fB\-\-ca\-password\fR=\fIca\-password\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\fR] [\fB\-\-issuer\fR=\fIissuer\fR] [\fB\-\-issuer\-name\fR=\fIissuer\-name\fR] [\fB\-\-name\fR=\fIname\fR] [\fB\-\-no\-sign\fR] [\fB\-\-password\fR=\fIpassword\fR] [\fB\-\-revoke\fR] [\fB\-\-self\-signed\fR] [\fBC\fR=\fIcountry\fR] [\fBST\fR=\fIstate\fR] [\fBL\fR=\fIlocality\fR] [\fBO\fR=\fIorganization\fR] [\fBOU\fR=\fIorg\-unit\fR] \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Generate and sign a certificate with the CA in \fIdb\fR unless \fB\-\-revoke\fR is given, in which case the certificate is revoked instead\.
@@ -84,6 +84,10 @@ Certificate Locality (usually a city; defaults to the CA locality)\.
 .TP
 \fBO\fR=\fIorganization\fR
 Certificate organization (usually a company; defaults to the CA organization)\.
+.
+.TP
+\fBOU\fR=\fIorg\-unit\fR
+Certificate organizational unit (usually a department or group; defaults to the CA organizational unit)\.
 .
 .TP
 \fBCN\fR=\fIcommon\-name\fR

@@ -81,7 +81,7 @@
 
 <h2 id="SYNOPSIS">SYNOPSIS</h2>
 
-<p><code>certified</code> [<code>--bits</code>=<em>bits</em>] [<code>--ca</code>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--issuer</code>=<em>issuer</em>] [<code>--issuer-name</code>=<em>issuer-name</em>] [<code>--name</code>=<em>name</em>] [<code>--no-sign</code>] [<code>--password</code>=<em>password</em>] [<code>--revoke</code>] [<code>--self-signed</code>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
+<p><code>certified</code> [<code>--bits</code>=<em>bits</em>] [<code>--ca</code>] [<code>--ca-password</code>=<em>ca-password</em>] [<code>--days</code>=<em>days</em>] [<code>--db</code>=<em>db</em>] [<code>--encrypt</code>] [<code>--issuer</code>=<em>issuer</em>] [<code>--issuer-name</code>=<em>issuer-name</em>] [<code>--name</code>=<em>name</em>] [<code>--no-sign</code>] [<code>--password</code>=<em>password</em>] [<code>--revoke</code>] [<code>--self-signed</code>] [<code>C</code>=<em>country</em>] [<code>ST</code>=<em>state</em>] [<code>L</code>=<em>locality</em>] [<code>O</code>=<em>organization</em>] [<code>OU</code>=<em>org-unit</em>] <code>CN</code>=<em>common-name</em> [<code>+</code><em>dns</em>[<em>...</em>]] [<code>+</code><em>ip</em>[<em>...</em>]]</p>
 
 <h2 id="DESCRIPTION">DESCRIPTION</h2>
 
@@ -94,19 +94,22 @@
 <dl>
 <dt><code>--bits</code>=<em>bits</em></dt><dd>Bits to use for the private key (defaults to <em>2048</em>).</dd>
 <dt class="flush"><code>--ca</code></dt><dd>Generate a CA certificate.</dd>
+<dt><code>--ca-password</code>=<em>ca-password</em></dt><dd>Password for the CA private key.</dd>
 <dt><code>--days</code>=<em>days</em></dt><dd>Days until the certificate expires (defaults to <em>3650</em>).</dd>
 <dt class="flush"><code>--db</code>=<em>db</em></dt><dd>OpenSSL database directory (defaults to <em>etc/ssl</em>).</dd>
+<dt><code>--encrypt</code></dt><dd>Encrypt the private key (with <em>encrypt-password</em>, if given).</dd>
 <dt><code>--issuer</code>=<em>issuer</em></dt><dd>Common name of an alternative CA certificate.</dd>
 <dt><code>--issuer-name</code>=<em>issuer-name</em></dt><dd>Filename of the alternative CA certificate (default derived from the alternative CA common name).</dd>
 <dt><code>--name</code>=<em>name</em></dt><dd>Filename to use (default derived from the certificate common name).</dd>
 <dt><code>--no-sign</code></dt><dd>Do not sign the certificate; stop with a certificate signing request.  Relay this certificate signing request to your certificate vendor.</dd>
-<dt><code>--password</code>=<em>password</em></dt><dd>Password for the CA private key.</dd>
+<dt><code>--password</code>=<em>password</em></dt><dd>Password for the private key (implies <code>--encrypt</code>).</dd>
 <dt><code>--revoke</code></dt><dd>Revoke an existing certificate.</dd>
 <dt><code>--self-signed</code></dt><dd>Generate a self-signed certificate instead of using the CA.</dd>
 <dt><code>C</code>=<em>country</em></dt><dd>Certificate country (defaults to the CA country).</dd>
 <dt><code>ST</code>=<em>state</em></dt><dd>Certificate state (defaults to the CA state).</dd>
 <dt><code>L</code>=<em>locality</em></dt><dd>Certificate Locality (usually a city; defaults to the CA locality).</dd>
 <dt><code>O</code>=<em>organization</em></dt><dd>Certificate organization (usually a company; defaults to the CA organization).</dd>
+<dt><code>OU</code>=<em>org-unit</em></dt><dd>Certificate organizational unit (usually a department or group; defaults to the CA organizational unit).</dd>
 <dt><code>CN</code>=<em>common-name</em></dt><dd>Certificate common name (usually a domain name).</dd>
 <dt><code>+</code><em>dns</em>, <code>+</code><em>ip</em></dt><dd>Add a DNS name or IP address to the certificate's subject alternative names.</dd>
 </dl>
@@ -118,7 +121,7 @@
 
 <h2 id="AUTHOR">AUTHOR</h2>
 
-<p>Richard Crowley &lt;<a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#x72;&#x40;&#x72;&#99;&#x72;&#111;&#x77;&#108;&#x65;&#x79;&#x2e;&#111;&#x72;&#x67;" data-bare-link="true">&#x72;&#x40;&#x72;&#99;&#114;&#x6f;&#x77;&#x6c;&#x65;&#x79;&#46;&#111;&#114;&#x67;</a>></p>
+<p>Richard Crowley &lt;<a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#x3a;&#114;&#64;&#114;&#99;&#114;&#x6f;&#x77;&#x6c;&#x65;&#x79;&#x2e;&#111;&#114;&#103;" data-bare-link="true">&#114;&#64;&#x72;&#99;&#x72;&#x6f;&#x77;&#108;&#101;&#x79;&#46;&#111;&#x72;&#103;</a>></p>
 
 <h2 id="SEE-ALSO">SEE ALSO</h2>
 
@@ -133,7 +136,7 @@
 
   <ol class='man-decor man-foot man foot'>
     <li class='tl'></li>
-    <li class='tc'>April 2014</li>
+    <li class='tc'>October 2015</li>
     <li class='tr'>certified(1)</li>
   </ol>
 
