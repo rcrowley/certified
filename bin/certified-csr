@@ -20,6 +20,7 @@
 #/   CN=<common-name>            certificate common name (usually a domain name)
 #/   +<dns>                      add a DNS name to the certificate's subject alternative names
 #/   +<ip>                       add an IP address to the certificate's subject alternative names
+#/   +<ID>:<value>               add any x509 SAN property, useful for RID, URI, email, etc
 
 set -e
 
@@ -27,6 +28,7 @@ set -e
 
 SAN_DNS=""
 SAN_IP=""
+SAN_ID=""
 while [ "$#" -gt 0 ]
 do
     case "$1" in
@@ -60,7 +62,9 @@ do
         ST=*) ST="$(echo "$1" | cut -d"=" -f"2-")" shift;;
         +*)
             SAN="$(echo "$1" | cut -c"2-")" shift
-            if is_ip "$SAN"
+            if is_san_id "$SAN"
+            then SAN_ID="$SAN_ID $SAN"
+            elif is_ip "$SAN"
             then SAN_IP="$SAN_IP $SAN"
             elif is_dns "$SAN"
             then SAN_DNS="$SAN_DNS $SAN"
@@ -142,7 +146,7 @@ default_md = sha256
 distinguished_name = dn
 prompt = no
 EOF
-    if [ "$SAN_DNS" -o "$SAN_IP" ]
+    if [ "$SAN_DNS" -o "$SAN_IP" -o "$SAN_ID" ]
     then cat <<EOF
 
 [san]
@@ -158,6 +162,14 @@ EOF
     for IP in $SAN_IP
     do
         echo "IP.$I = $IP"
+        I=$(($I + 1))
+    done
+    I=1
+    for SID in $SAN_ID
+    do
+        ID="$(echo "$SID" | cut -f1 -d":")"
+        VAL="$(echo "$SID" | cut -f2- -d":")"
+        echo "$ID.$I = $VAL"
         I=$(($I + 1))
     done
     cat <<EOF

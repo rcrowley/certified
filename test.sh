@@ -150,6 +150,11 @@ certified CN="Wildcard" +"*.example.com"
 openssl x509 -in "etc/ssl/certs/wildcard.crt" -noout -text |
 grep -F -q "DNS:*.example.com"
 
+# Test that we can add generic SAN IDs to a certificate.
+certified CN="AnySAN" +"URI:hello:world"
+openssl x509 -in "etc/ssl/certs/anysan.crt" -noout -text |
+grep -F -q "URI:hello:world"
+
 # Test that we can't add double DNS wildcards to a certificate.
 certified CN="Double Wildcard" +"*.*.example.com" && false
 

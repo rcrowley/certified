@@ -1,13 +1,13 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "CERTIFIED\-CA" "1" "October 2015" "" "Certified"
+.TH "CERTIFIED\-CA" "1" "January 2017" "" "Certified"
 .
 .SH "NAME"
 \fBcertified\-ca\fR \- generate a CA
 .
 .SH "SYNOPSIS"
-\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\-intermediate\fR] [\fB\-\-intermediate\-password\fR=\fIintermediate\-password\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-revoke\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] [\fB\-\-root\-password\fR=\fIroot\-password\fR] [\fBOU\fR=\fIorg\-unit\fR] \fBC\fR=\fIcountry\fR \fBST\fR=\fIstate\fR \fBL\fR=\fIlocality\fR \fBO\fR=\fIorganization\fR \fBCN\fR=\fIcommon\-name\fR
+\fBcertified\-ca\fR [\fB\-\-bits\fR=\fIbits\fR] [\fB\-\-crl\-url\fR=\fIcrl\-url\fR] [\fB\-\-days\fR=\fIdays\fR] [\fB\-\-db\fR=\fIdb\fR] [\fB\-\-encrypt\-intermediate\fR] [\fB\-\-intermediate\-password\fR=\fIintermediate\-password\fR] [\fB\-\-ocsp\-url\fR=\fIocsp\-url\fR] [\fB\-\-revoke\fR] [\fB\-\-root\-crl\-url\fR=\fIroot\-crl\-url\fR] [\fB\-\-root\-password\fR=\fIroot\-password\fR] [\fBOU\fR=\fIorg\-unit\fR] \fBC\fR=\fIcountry\fR \fBST\fR=\fIstate\fR \fBL\fR=\fIlocality\fR \fBO\fR=\fIorganization\fR \fBCN\fR=\fIcommon\-name\fR [\fB+\fR\fIdns\fR[\fI\.\.\.\fR]] [\fB+\fR\fIip\fR[\fI\.\.\.\fR]] [\fB+\fR\fIid\fR:\fIvalue\fR[\fI\.\.\.\fR]]
 .
 .SH "DESCRIPTION"
 Generate two private keys\. The first is self\-signed to generate the root CA certificate\. It is then used to sign the second to generate the intermediate CA certificate\. The root CA certificate should be installed on laptops and servers\. The intermediate CA signs subsequent certificates and may itself be revoked in the event its private key is compromised\.
@@ -84,6 +84,10 @@ Certificate common name (usually a domain name or \fICompany CA\fR)\.
 .TP
 \fB+\fR\fIdns\fR, \fB+\fR\fIip\fR
 Add a DNS name or IP address to the certificate\'s subject alternative names\.
+.
+.TP
+\fB+\fR\fIid\fR:\fIvalue\fR
+Add any SAN field to the certificate\'s subject alternative names, ie: URI:mailto:nobody@example\.com\.
 .
 .SH "THEME SONG"
 Led Zeppelin \- "Fool in the Rain"

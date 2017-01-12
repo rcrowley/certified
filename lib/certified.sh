@@ -54,6 +54,11 @@ is_ip() {
     echo "$1" | grep -E -q "([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]).([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]).([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]).([0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])"
 }
 
+# Return zero if the first characters represents a valid looking SAN identifier
+is_san_id() {
+    echo "$1" | grep -E -q "^[a-zA-Z0-9]+:.*"
+}
+
 # Log a message to stderr, in bold and prefixed with "certified: ".
 log() {
     echo "$(tput "bold")$(basename "$0"): $*$(tput "sgr0")" >&2
